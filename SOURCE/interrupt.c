@@ -15,5 +15,5 @@ void INT0_init()
 void INT0_service() interrupt 0
 {
     // 进入中断意味着有按键按下，此时查看按下的按键
-
+    counting_machine();
 }

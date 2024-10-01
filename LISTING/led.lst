@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   10/01/2024 15:57:44 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   10/01/2024 16:02:22 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -62,7 +62,7 @@ line level    source
   52          // display_screen(input,signature)
   53          // input为需要输入的字符，signature为选位
   54          // 该函数的显示过程已经进行了消影处理
-C51 COMPILER V9.54   LED                                                                   10/01/2024 15:57:44 PAGE 2   
+C51 COMPILER V9.54   LED                                                                   10/01/2024 16:02:22 PAGE 2   
 
   55          void display_screen(unsigned char input,unsigned char signature)
   56          {
@@ -126,7 +126,7 @@ line level    source
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    336    ----
-C51 COMPILER V9.54   LED                                                                   10/01/2024 15:57:44 PAGE 3   
+C51 COMPILER V9.54   LED                                                                   10/01/2024 16:02:22 PAGE 3   
 
    CONSTANT SIZE    =     25    ----
    XDATA SIZE       =   ----    ----

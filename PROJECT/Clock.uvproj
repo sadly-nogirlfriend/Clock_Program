@@ -383,6 +383,11 @@
               <FileType>1</FileType>
               <FilePath>..\SOURCE\service_fun.c</FilePath>
             </File>
+            <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SOURCE\interrupt.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
