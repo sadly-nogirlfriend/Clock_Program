@@ -1,0 +1,147 @@
+C51 COMPILER V9.54   SERVICE_FUN                                                           10/01/2024 16:02:22 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE SERVICE_FUN
+OBJECT MODULE PLACED IN ..\OUTPUT\service_fun.obj
+COMPILER INVOKED BY: E:\Keil_C51\C51\BIN\C51.EXE ..\SOURCE\service_fun.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\SOURCE) DEBU
+                    -G OBJECTEXTEND PRINT(..\LISTING\service_fun.lst) TABS(2) OBJECT(..\OUTPUT\service_fun.obj)
+
+line level    source
+
+   1          /*******************************************************
+   2          file.name : service_fun.c
+   3          version : 1.1
+   4          description : 存放了一些用于程序运行的功能函数
+   5          *******************************************************/
+   6          
+   7          // 包含的头文件
+   8          #include "service_fun.h"
+   9          #include <reg51.h>
+  10          #include "key.h"
+  11          #include "led.h"
+  12          
+  13          // 宏定义
+  14          #define       WINDOW1       2
+  15          #define       WINDOW2       3
+  16          #define       WINDOW3       4
+  17          
+  18          // 定义的变量
+  19          unsigned int count1 = 0;  //用于计数，窗口1
+  20          unsigned int count2 = 0;  //用于计数，窗口2
+  21          unsigned int count3 = 0;  //用于计数，窗口3
+  22          unsigned char windows = WINDOW1;  // 用于窗口标记，默认为窗口1
+  23          
+  24          // 该函数用于数字转字符串,将四位整数转化为字符串
+  25          // 注意数字为无符号整数，一定要大于0
+  26          unsigned char* num2str(unsigned int num)
+  27          {
+  28   1        unsigned char str[4] = "0000";
+  29   1        str[3] = num%10+'0';
+  30   1        str[2] = (num/10)%10+'0';
+  31   1        str[1] = (num/100)%10+'0';
+  32   1        str[0] = (num/1000)%10+'0';
+  33   1        return str;
+  34   1      }
+  35          
+  36          void display_windows()
+  37          {
+  38   1        switch (windows)
+  39   1        {
+  40   2        case WINDOW1:
+  41   2          display_str_once(num2str(count1));
+  42   2          break;
+  43   2        case WINDOW2:
+  44   2          display_str_once(num2str(count2));
+  45   2          break;
+  46   2        case WINDOW3:
+  47   2          display_str_once(num2str(count3));
+  48   2          break;
+  49   2        default:
+  50   2          display_str_once("----");
+  51   2          break;
+  52   2        }
+  53   1      }
+  54          
+C51 COMPILER V9.54   SERVICE_FUN                                                           10/01/2024 16:02:22 PAGE 2   
+
+  55          // 该函数用于实现计数器功能。
+  56          // key2计数，key1切换窗口，key3减一，key4归零
+  57          void counting_machine()
+  58          {
+  59   1        unsigned char key_state;
+  60   1        // 获取按键状态
+  61   1        key_state = Key_State_Scan(MODEL1,WAITING_RELEASE);
+  62   1        if(key_state&1)   //查看key1
+  63   1        {
+  64   2          windows++;
+  65   2          if(windows==WINDOW3+1){windows=WINDOW1;}
+  66   2        }
+  67   1        //在每一个周期，根据当前窗口显示对应的计数
+  68   1        // 注意显示的计数无符号，显示范围为0~9999
+  69   1        switch(windows)
+  70   1        {
+  71   2          case WINDOW1:
+  72   2            if((key_state>>1)&1)    //查看key2
+  73   2            {
+  74   3              count1++;
+  75   3            }
+  76   2            if((key_state>>2)&1)    //查看key3
+  77   2            {
+  78   3              count1--;
+  79   3            }
+  80   2            if((key_state>>3)&1)    //查看key4
+  81   2            {
+  82   3              count1 = 0;
+  83   3            }
+  84   2            if(count1 > 9999){count1 = 0;}   // 防溢出
+  85   2            break;
+  86   2          case WINDOW2:
+  87   2            if((key_state>>1)&1)
+  88   2            {
+  89   3              count2++;
+  90   3            }
+  91   2            if((key_state>>2)&1)
+  92   2            {
+  93   3              count2--;
+  94   3            }
+  95   2            if((key_state>>3)&1)
+  96   2            {
+  97   3              count2 = 0;
+  98   3            }
+  99   2            if(count2 > 9999){count2 = 0;}   // 防溢出
+ 100   2            break;
+ 101   2          case WINDOW3:
+ 102   2            if((key_state>>1)&1)
+ 103   2            {
+ 104   3              count3++;
+ 105   3            }
+ 106   2            if((key_state>>2)&1)
+ 107   2            {
+ 108   3              count3--;
+ 109   3            }
+ 110   2            if((key_state>>3)&1)
+ 111   2            {
+ 112   3              count3 = 0;
+ 113   3            }
+ 114   2            if(count3 > 9999){count3 = 0;}   // 防溢出
+ 115   2            break;
+ 116   2          default:
+C51 COMPILER V9.54   SERVICE_FUN                                                           10/01/2024 16:02:22 PAGE 3   
+
+ 117   2            break;
+ 118   2        }
+ 119   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    385    ----
+   CONSTANT SIZE    =      9    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

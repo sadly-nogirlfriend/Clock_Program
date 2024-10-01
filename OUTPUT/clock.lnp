@@ -1,0 +1,6 @@
+"..\OUTPUT\key.obj",
+"..\OUTPUT\led.obj",
+"..\OUTPUT\main.obj",
+"..\OUTPUT\service_fun.obj" 
+TO "..\OUTPUT\clock" 
+PRINT("..\LISTING\clock.m51")
