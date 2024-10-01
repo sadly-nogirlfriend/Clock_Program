@@ -44,14 +44,14 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\Objects\</OutputDirectory>
+          <OutputDirectory>..\OUTPUT\</OutputDirectory>
           <OutputName>clock</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>.\Listings\</ListingPath>
+          <ListingPath>..\LISTING\</ListingPath>
           <HexFormatSelection>0</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -230,7 +230,7 @@
               <RCB>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <Size>0x10000</Size>
               </RCB>
               <RXB>
                 <Type>0</Type>
@@ -311,7 +311,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>..\SOURCE</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -364,11 +364,6 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SOURCE\interrupt.c</FilePath>
-            </File>
-            <File>
               <FileName>key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SOURCE\key.c</FilePath>
@@ -387,11 +382,6 @@
               <FileName>service_fun.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SOURCE\service_fun.c</FilePath>
-            </File>
-            <File>
-              <FileName>soundplay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SOURCE\soundplay.c</FilePath>
             </File>
           </Files>
         </Group>

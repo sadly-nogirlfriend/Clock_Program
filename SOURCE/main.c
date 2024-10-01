@@ -2,13 +2,15 @@
 #include "led.h"
 #include "key.h"
 #include "service_fun.h"
+#include "interrupt.h"
 
 void main()
 {
 	display_str("----",2000);  // 初始化提醒
 	while(1)
 	{
-		// counting_machine();
+		counting_machine();
+		display_windows();
 	}
 }
 

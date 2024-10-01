@@ -33,6 +33,24 @@ unsigned char* num2str(unsigned int num)
 	return str;
 }
 
+void display_windows()
+{
+	switch (windows)
+	{
+	case WINDOW1:
+		display_str_once(num2str(count1));
+		break;
+	case WINDOW2:
+		display_str_once(num2str(count2));
+		break;
+	case WINDOW3:
+		display_str_once(num2str(count3));
+		break;
+	default:
+		display_str_once("----");
+		break;
+	}
+}
 
 // 该函数用于实现计数器功能。
 // key2计数，key1切换窗口，key3减一，key4归零
@@ -64,7 +82,6 @@ void counting_machine()
 				count1 = 0;
 			}
 			if(count1 > 9999){count1 = 0;}   // 防溢出
-			display_str_once(num2str(count1));
 			break;
 		case WINDOW2:
 			if((key_state>>1)&1)
@@ -80,7 +97,6 @@ void counting_machine()
 				count2 = 0;
 			}
 			if(count2 > 9999){count2 = 0;}   // 防溢出
-			display_str_once(num2str(count2));
 			break;
 		case WINDOW3:
 			if((key_state>>1)&1)
@@ -96,9 +112,8 @@ void counting_machine()
 				count3 = 0;
 			}
 			if(count3 > 9999){count3 = 0;}   // 防溢出
-			display_str_once(num2str(count3));
 			break;
 		default:
-			display_str_once("----");
+			break;
 	}
 }

@@ -3,8 +3,8 @@
         {
             "name": "Target 1",
             "includePath": [
-                "E:\\Keil_C51\\C51\\INC",
-                "e:\\c51\\keil_c51\\clock\\SOURCE"
+                "e:\\c51\\keil_c51\\clock\\SOURCE",
+                "E:\\Keil_C51\\C51\\INC"
             ],
             "defines": [
                 "__C51__",
