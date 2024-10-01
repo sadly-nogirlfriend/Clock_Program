@@ -33,6 +33,7 @@ unsigned char* num2str(unsigned int num)
 	return str;
 }
 
+
 // 该函数用于实现计数器功能。
 // key2计数，key1切换窗口，key3减一，key4归零
 void counting_machine()

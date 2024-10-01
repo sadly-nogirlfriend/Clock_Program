@@ -8,7 +8,7 @@ void main()
 	display_str("----",2000);  // 初始化提醒
 	while(1)
 	{
-		counting_machine();
+		// counting_machine();
 	}
 }
 
