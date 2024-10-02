@@ -1,6 +1,8 @@
 "..\OUTPUT\key.obj",
 "..\OUTPUT\led.obj",
 "..\OUTPUT\main.obj",
-"..\OUTPUT\service_fun.obj" 
+"..\OUTPUT\service_fun.obj",
+"..\OUTPUT\interrupt.obj",
+"..\OUTPUT\timer.obj" 
 TO "..\OUTPUT\clock" 
 PRINT("..\LISTING\clock.m51")

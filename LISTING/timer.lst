@@ -1,0 +1,58 @@
+C51 COMPILER V9.54   TIMER                                                                 10/02/2024 11:03:37 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN ..\OUTPUT\timer.obj
+COMPILER INVOKED BY: E:\Keil_C51\C51\BIN\C51.EXE ..\SOURCE\timer.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\SOURCE) DEBUG OBJE
+                    -CTEXTEND PRINT(..\LISTING\timer.lst) TABS(2) OBJECT(..\OUTPUT\timer.obj)
+
+line level    source
+
+   1          #include "timer.h"
+   2          #include "REG51.H"
+   3          
+   4          void T0_Init()
+   5          {
+   6   1          TMOD = 0x01;    // 初始化，16位计数模式。
+   7   1          TR0 = 1;
+   8   1      }
+   9          
+  10          void short_delay_5ms()
+  11          {
+  12   1        TF0 = 0;                  // 在计数0点将标志位置1
+  13   1          TL0 = (65536-5000)%256;  // 低八位初始化
+  14   1          TH0 = (65536-5000)/256;  // 高八位初始化
+  15   1          while(TF0 == 0);
+  16   1      }
+  17          
+  18          void Timer_delay_50ms()
+  19          {
+  20   1        TF0 = 0;                  // 在计数0点将标志位置1
+  21   1          TL0 = (65536-50000)%256;  // 低八位初始化
+  22   1          TH0 = (65536-50000)/256;  // 高八位初始化
+  23   1          while(TF0 == 0);
+  24   1      }
+  25          
+  26          // 最小延时时间位50ms，延时毫秒为50ms的整数倍
+  27          void Timer_long_delay_Xms(unsigned int xms)
+  28          {
+  29   1          unsigned int i;
+  30   1          for(i = 0;i < xms/50;i++)
+  31   1          {
+  32   2              Timer_delay_50ms();
+  33   2          }
+  34   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     64    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

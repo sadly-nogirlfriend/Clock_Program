@@ -7,6 +7,7 @@ description : 该文件存放了一些用于显示led和led数码管的
 
 #include "led.h"
 #include <reg51.h>
+#include "timer.h"
 
 // led段码表,存放在rom中
 unsigned char code leddata[]={ 
@@ -36,17 +37,6 @@ unsigned char code leddata[]={
                 0xFF,  //熄灭
                 0x91   //"y"
                          };
-
-// 延时X毫秒的函数
-void DelayXms(unsigned int xms)
-{
-
-	unsigned int i,j;
-	for(i=xms;i>0;i--)
-	{
-		for(j=0;j<124;j++);
-	}
-}
 
 // 用于让数码管静态显示
 // display_screen(input,signature)
@@ -82,11 +72,11 @@ void display_screen(unsigned char input,unsigned char signature)
 		GPIO_DIG = leddata[23];
 	else if(input=='y')
 		GPIO_DIG = leddata[24];
-	DelayXms(5);
+	short_delay_5ms();
 	
 	// 消影
 	GPIO_DIG = 0xff;
-	DelayXms(5);
+	short_delay_5ms();
 }
 
 // 用于让数码管在xms内动态显示一组数组
