@@ -5,8 +5,8 @@
 #define       ZERO             0xC0    
 #define       ONE              0xF9    
 #define       TWO              0xA4    
-#define       THREE        		 0xB0    
-#define       FOUR      		   0x99    
+#define       THREE        	   0xB0    
+#define       FOUR      	   0x99    
 #define       FIVE             0x92    
 #define       SIX              0x82    
 #define       SEVEN            0xF8    
@@ -30,7 +30,7 @@
 
 // 宏定义数字管的段码io口和位选io口
 #define				GPIO_DIG				P1       // 段码
-#define				GPIO_PLACE				P0		 // 位选
+#define				GPIO_PLACE				P2		 // 位选
 
 void display_screen(unsigned char input,unsigned char signature);
 void display_str(unsigned char *input,unsigned int xms);

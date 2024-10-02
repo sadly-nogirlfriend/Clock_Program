@@ -4,7 +4,8 @@
         "key.h": "c",
         "interrupt.h": "c",
         "service_fun.h": "c",
-        "timer.h": "c"
+        "timer.h": "c",
+        "REG51.H": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

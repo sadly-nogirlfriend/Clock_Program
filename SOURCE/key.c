@@ -16,10 +16,10 @@ description : 存放了一些用于按键的功能函数
 #define				KEY4_ON 			0x8		//1000
 
 // 定义按键io口
-sbit key1 = P2^0;
-sbit key2 = P2^1;
-sbit key3 = P2^2;
-sbit key4 = P2^3;
+sbit key1 = P0^0;
+sbit key2 = P0^1;
+sbit key3 = P0^2;
+sbit key4 = P0^3;
 
 // 定义变量
 unsigned char key_state = 0x0;
