@@ -7,6 +7,7 @@ description : 存放了一些用于按键的功能函数
 #include "key.h"
 #include "led.h"
 #include <reg51.h>
+#include "timer.h"
 
 // 定义按键的状态
 #define				KEY1_ON 			0x1   //0001
@@ -37,7 +38,7 @@ unsigned char Key_State_Scan(unsigned char model,unsigned char wait_mod)
 	{
 		if(!key1 || !key2 || !key3 || !key4)  // 检测是否有按键被按下
 		{
-			DelayXms(10);		//消抖
+			short_delay_5ms();		//消抖
 			if(!key1)
 			{
 				key_state_1 = key_state_1 + KEY1_ON;  //按键赋值
@@ -66,7 +67,7 @@ unsigned char Key_State_Scan(unsigned char model,unsigned char wait_mod)
 	{
 		if(!key1 || !key2 || !key3 || !key4)  // 检测是否有按键被按下
 		{
-			DelayXms(10);		//消抖
+			short_delay_5ms();		//消抖
 			if(!key1)
 			{
 				key_state = key_state ^ (1 << 0);  //按键赋值，按位取反

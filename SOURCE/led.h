@@ -29,10 +29,9 @@
 #define       CUSTOM           0xFF    
 
 // 宏定义数字管的段码io口和位选io口
-#define				GPIO_DIG					P1    // 段码
-#define				GPIO_PLACE				P0		// 位选
+#define				GPIO_DIG				P1       // 段码
+#define				GPIO_PLACE				P0		 // 位选
 
-void DelayXms(unsigned int xms);
 void display_screen(unsigned char input,unsigned char signature);
 void display_str(unsigned char *input,unsigned int xms);
 void display_str_once(unsigned char *input);
