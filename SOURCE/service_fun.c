@@ -90,45 +90,46 @@ void time_carry()
 		hours = 0;
 	}
 
-	if((years%4 == 0)&&(years%100 != 0)||(years%400 == 0))
-	{
-		switch (mounth)
-		{
-		case 1:
-		case 3:
-		case 5:
-		case 7:
-		case 8:
-		case 10:
-		case 12:
-			if(day == 31)
-			{
-				mounth++;
-				day = 0;
-			}
-			break;
-		case 2:
-			if(day == 29)
-			{
-				mounth++;
-				day = 0;
-			}
-			break;
-		case 4:
-		case 6:
-		case 9:
-		case 11:
-			if(day == 30)
-			{
-				mounth++;
-				day = 0;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	else
+    if((years%4 == 0)&&(years%100 != 0)||(years%400 == 0))   // 闰年
+    {
+        switch (mounth)
+        {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+            if(day > 31)
+            {
+                years++;
+                mounth = 1;
+                day = 1;
+            }
+            break;
+        case 2:
+            if(day > 29)
+            {
+                mounth++;
+                day = 1;
+            }
+            break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            if(day > 30)
+            {
+                mounth++;
+                day = 1;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    else
 	{
 		switch (mounth)
 		{
