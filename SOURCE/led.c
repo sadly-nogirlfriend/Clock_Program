@@ -9,6 +9,10 @@ description : 该文件存放了一些用于显示led和led数码管的
 #include <reg51.h>
 #include "timer.h"
 
+// 宏定义数字管的段码io口和位选io口
+#define				GPIO_DIG				P1       // 段码
+#define				GPIO_PLACE				P2		 // 位选
+
 // led段码表,存放在rom中
 unsigned char code leddata[]={ 
                 0xC0,  //"0"
@@ -44,11 +48,10 @@ unsigned char code leddata[]={
 // 该函数的显示过程已经进行了消影处理
 void display_screen(unsigned char input,unsigned char signature)
 {
-	unsigned char temp = 0xf1;
+	unsigned char temp = 0x01;
 	// 设置选位
 	if(signature>=0&&signature<=3)
-		GPIO_PLACE = temp << signature;
-	
+		GPIO_PLACE = (GPIO_PLACE & 0xf0) + (temp << signature);  // 保留高四位,变更低四位
 	
 	if((input>='0')&&(input<='9'))
 		GPIO_DIG = leddata[input-'0'];
@@ -93,8 +96,9 @@ void display_str(unsigned char *input,unsigned int xms)
 }
 
 // 用于让数码管动态显示一次数组，一次的显示时长约为40ms
-void display_str_once(unsigned char *input)
+void display_str_once(unsigned char* input)
 {
+//	input[0] = '0' ;
 	display_screen(input[0],0);
 	display_screen(input[1],1);
 	display_screen(input[2],2);

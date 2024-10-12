@@ -19,24 +19,25 @@ CPU DLL:         S8051.DLL V3.100.0.0
 Dialog DLL:      DP51.DLL V2.62.0.1 
 <h2>Project:</h2>
 E:\c51\keil_c51\clock\PROJECT\clock.uvproj
-Project File Date:  10/02/2024
+Project File Date:  10/03/2024
 
 <h2>Output:</h2>
 Rebuild target 'Target 1'
 compiling key.c...
 compiling led.c...
 compiling main.c...
+..\SOURCE\main.c(13): warning C206: 'Interrupt_init': missing function-prototype
 compiling service_fun.c...
 compiling interrupt.c...
 compiling timer.c...
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?DISPLAY_WINDOWS?SERVICE_FUN
+    SEGMENT: ?PR?_KEY_STATE_SCAN?KEY
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_TIMER_LONG_DELAY_XMS?TIMER
-Program Size: data=35.0 xdata=0 code=1610
+Program Size: data=33.0 xdata=0 code=1155
 creating hex file from "..\OUTPUT\clock"...
-"..\OUTPUT\clock" - 0 Error(s), 2 Warning(s).
+"..\OUTPUT\clock" - 0 Error(s), 3 Warning(s).
 </pre>
 </body>
 </html>

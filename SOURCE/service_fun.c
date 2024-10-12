@@ -14,8 +14,16 @@ description : 存放了一些用于程序运行的功能函数
 #define 			WINDOW1				2
 #define 			WINDOW2				3
 #define 			WINDOW3				4
+#define  			CLOCK_MOD			5
 
 // 定义的变量
+unsigned char mins = 0;
+unsigned char hours = 0;
+unsigned char day = 1;
+unsigned char mounth = 1;
+unsigned int year = 0; 
+int min_time = 0; 
+
 unsigned int count1 = 0;  //用于计数，窗口1
 unsigned int count2 = 0;  //用于计数，窗口2
 unsigned int count3 = 0;  //用于计数，窗口3
@@ -25,7 +33,7 @@ unsigned char windows = WINDOW1;  // 用于窗口标记，默认为窗口1
 // 注意数字为无符号整数，一定要大于0
 unsigned char* num2str(unsigned int num)
 {
-	unsigned char str[4] = "0000";
+	static unsigned char str[] = "0000";
 	str[3] = num%10+'0';
 	str[2] = (num/10)%10+'0';
 	str[1] = (num/100)%10+'0';
@@ -33,6 +41,7 @@ unsigned char* num2str(unsigned int num)
 	return str;
 }
 
+// 该函数用于显示对应窗口
 void display_windows()
 {
 	switch (windows)
@@ -52,68 +61,110 @@ void display_windows()
 	}
 }
 
-// 该函数用于实现计数器功能。
-// key2计数，key1切换窗口，key3减一，key4归零
-void counting_machine()
+// 窗口分配：window1 用于时钟
+void clock() interrupt 1
 {
-	unsigned char key_state;
-	// 获取按键状态
-	key_state = Key_State_Scan(MODEL1,WAITING_RELEASE);
-	if(key_state&1)		//查看key1
+	// 标志位清零
+	TF0 = 0;
+	// 定时60ms
+	TL0 = (65536 - 60000)%256;
+	TH0 = (65536 - 60000)/256;
+	min_time++;
+}
+
+void time_carry()
+{
+	if(min_time == 1000)
 	{
-		windows++;
-		if(windows==WINDOW3+1){windows=WINDOW1;}
+		mins++;
+		min_time = 0;
 	}
-	//在每一个周期，根据当前窗口显示对应的计数
-	// 注意显示的计数无符号，显示范围为0~9999
-	switch(windows)
+	if(mins == 60)
 	{
-		case WINDOW1:
-			if((key_state>>1)&1)		//查看key2
+		hours++;
+		mins = 0;
+	}
+	if(hours == 24)
+	{
+		day++;
+		hours = 0;
+	}
+
+    if((years%4 == 0)&&(years%100 != 0)||(years%400 == 0))   // 闰年
+    {
+        switch (mounth)
+        {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+            if(day > 31)
+            {
+                years++;
+                mounth = 1;
+                day = 1;
+            }
+            break;
+        case 2:
+            if(day > 29)
+            {
+                mounth++;
+                day = 1;
+            }
+            break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            if(day > 30)
+            {
+                mounth++;
+                day = 1;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    else
+	{
+		switch (mounth)
+		{
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+			if(day == 31)
 			{
-				count1++;
+				mounth++;
+				day = 0;
 			}
-			if((key_state>>2)&1)		//查看key3
-			{
-				count1--;
-			}
-			if((key_state>>3)&1)		//查看key4
-			{
-				count1 = 0;
-			}
-			if(count1 > 9999){count1 = 0;}   // 防溢出
 			break;
-		case WINDOW2:
-			if((key_state>>1)&1)
+		case 2:
+			if(day == 28)
 			{
-				count2++;
+				mounth++;
+				day = 0;
 			}
-			if((key_state>>2)&1)
-			{
-				count2--;
-			}
-			if((key_state>>3)&1)
-			{
-				count2 = 0;
-			}
-			if(count2 > 9999){count2 = 0;}   // 防溢出
 			break;
-		case WINDOW3:
-			if((key_state>>1)&1)
+		case 4:
+		case 6:
+		case 9:
+		case 11:
+			if(day == 30)
 			{
-				count3++;
+				mounth++;
+				day = 0;
 			}
-			if((key_state>>2)&1)
-			{
-				count3--;
-			}
-			if((key_state>>3)&1)
-			{
-				count3 = 0;
-			}
-			if(count3 > 9999){count3 = 0;}   // 防溢出
 			break;
 		default:
 			break;
+		}
 	}
 }
