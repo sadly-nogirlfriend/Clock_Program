@@ -14,9 +14,16 @@ description : 存放了一些用于程序运行的功能函数
 #define 			WINDOW1				2
 #define 			WINDOW2				3
 #define 			WINDOW3				4
+#define  			CLOCK_MOD			5
 
 // 定义的变量
+unsigned char mins = 0;
+unsigned char hours = 0;
+unsigned char day = 1;
+unsigned char mounth = 1;
+unsigned int year = 0; 
 int min_time = 0; 
+
 unsigned int count1 = 0;  //用于计数，窗口1
 unsigned int count2 = 0;  //用于计数，窗口2
 unsigned int count3 = 0;  //用于计数，窗口3
@@ -55,11 +62,108 @@ void display_windows()
 }
 
 // 窗口分配：window1 用于时钟
-//void clock() interrupt 
-//{
-//	// 标志位清零
-//	TF0 = 0;
-//	// 定时60ms
-//	TL0 = (65536 - 60000)%256;
-//	TH0 = (65536 - 60000)/256;
-//}
+void clock() interrupt 1
+{
+	// 标志位清零
+	TF0 = 0;
+	// 定时60ms
+	TL0 = (65536 - 60000)%256;
+	TH0 = (65536 - 60000)/256;
+	min_time++;
+}
+
+void time_carry()
+{
+	if(min_time == 1000)
+	{
+		mins++;
+		min_time = 0;
+	}
+	if(mins == 60)
+	{
+		hours++;
+		mins = 0;
+	}
+	if(hours == 24)
+	{
+		day++;
+		hours = 0;
+	}
+
+	if((years%4 == 0)&&(years%100 != 0)||(years%400 == 0))
+	{
+		switch (mounth)
+		{
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+			if(day == 31)
+			{
+				mounth++;
+				day = 0;
+			}
+			break;
+		case 2:
+			if(day == 29)
+			{
+				mounth++;
+				day = 0;
+			}
+			break;
+		case 4:
+		case 6:
+		case 9:
+		case 11:
+			if(day == 30)
+			{
+				mounth++;
+				day = 0;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		switch (mounth)
+		{
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+			if(day == 31)
+			{
+				mounth++;
+				day = 0;
+			}
+			break;
+		case 2:
+			if(day == 28)
+			{
+				mounth++;
+				day = 0;
+			}
+			break;
+		case 4:
+		case 6:
+		case 9:
+		case 11:
+			if(day == 30)
+			{
+				mounth++;
+				day = 0;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+}

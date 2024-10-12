@@ -4,13 +4,17 @@
 #include "service_fun.h"
 
 
-void INT0_init()
+void Interrupt_init()
 {
     EA = 1;    // 总开关
+	// INT0中断初始化
     EX0 = 1;   // 中断开关
     IT0 = 1;   // 设置中断触发模式
     PX0 = 0;   // 设置优先级
+	// T0定时器中断初始化
+		ET0 = 1;
 }
+
 
 void INT0_service() interrupt 0
 {

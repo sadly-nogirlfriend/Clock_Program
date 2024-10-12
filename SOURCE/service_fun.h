@@ -3,5 +3,6 @@
 
 unsigned char* num2str(unsigned int num);
 void display_windows();
+void clock();
 
 #endif
