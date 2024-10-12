@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TIMER                                                                 10/03/2024 01:02:10 PAGE 1   
+C51 COMPILER V9.54   TIMER                                                                 10/12/2024 11:09:14 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TIMER
@@ -13,39 +13,44 @@ line level    source
    3          
    4          void T0_Init()
    5          {
-   6   1          TMOD = 0x01;    // 初始化，16位计数模式。
+   6   1          TMOD = (TMOD & 0xF0) + 0x01;    // 将TMOD后四位初始化，16位计数模式。
    7   1          TR0 = 1;
    8   1      }
-   9          
-  10          void short_delay_5ms()
-  11          {
-  12   1        TF0 = 0;                  // 在计数0点将标志位置1
-  13   1          TL0 = (65536-5000)%256;  // 低八位初始化
-  14   1          TH0 = (65536-5000)/256;  // 高八位初始化
-  15   1          while(TF0 == 0);
-  16   1      }
-  17          
-  18          void Timer_delay_50ms()
-  19          {
-  20   1        TF0 = 0;                  // 在计数0点将标志位置1
-  21   1          TL0 = (65536-50000)%256;  // 低八位初始化
-  22   1          TH0 = (65536-50000)/256;  // 高八位初始化
-  23   1          while(TF0 == 0);
-  24   1      }
-  25          
-  26          // 最小延时时间位50ms，延时毫秒为50ms的整数倍
-  27          void Timer_long_delay_Xms(unsigned int xms)
-  28          {
-  29   1          unsigned int i;
-  30   1          for(i = 0;i < xms/50;i++)
-  31   1          {
-  32   2              Timer_delay_50ms();
-  33   2          }
-  34   1      }
+   9          void T1_Init()
+  10          {
+  11   1          TMOD = (TMOD & 0x0F) + 0x10;    // 将TMOD前四位初始化，16位计数模式。
+  12   1          TR1 = 1;
+  13   1      }
+  14          
+  15          void short_delay_5ms()
+  16          {
+  17   1        TF1 = 0;                  // 在计数0点将标志位置1
+  18   1          TL1 = (65536-5000)%256;  // 低八位初始化
+  19   1          TH1 = (65536-5000)/256;  // 高八位初始化
+  20   1          while(TF1 == 0);
+  21   1      }
+  22          
+  23          void Timer_delay_50ms()
+  24          {
+  25   1        TF1 = 0;                  // 在计数0点将标志位置1
+  26   1          TL1 = (65536-50000)%256;  // 低八位初始化
+  27   1          TH1 = (65536-50000)/256;  // 高八位初始化
+  28   1          while(TF1 == 0);
+  29   1      }
+  30          
+  31          // 最小延时时间位50ms，延时毫秒为50ms的整数倍
+  32          void Timer_long_delay_Xms(unsigned int xms)
+  33          {
+  34   1          unsigned int i;
+  35   1          for(i = 0;i < xms/50;i++)
+  36   1          {
+  37   2              Timer_delay_50ms();
+  38   2          }
+  39   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     64    ----
+   CODE SIZE        =     79    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

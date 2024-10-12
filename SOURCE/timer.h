@@ -2,6 +2,7 @@
 #define __TIMER_H
 
 void T0_Init();
+void T1_Init();
 void Timer_long_delay_Xms(unsigned int xms);
 void short_delay_5ms();
 

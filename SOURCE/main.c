@@ -12,6 +12,7 @@ void main()
 {
 	INT0_init();	// 中断初始化
 	T0_Init();		// 定时器初始化
+	T1_Init();
 	display_str("----",2000);  // 初始化提醒
 	LED1 = ~LED1;
 	LED2 = ~LED2;
@@ -20,6 +21,4 @@ void main()
 		
 	}
 }
-
-// INT0_service();
 

@@ -96,8 +96,9 @@ void display_str(unsigned char *input,unsigned int xms)
 }
 
 // 用于让数码管动态显示一次数组，一次的显示时长约为40ms
-void display_str_once(unsigned char *input)
+void display_str_once(unsigned char* input)
 {
+//	input[0] = '0' ;
 	display_screen(input[0],0);
 	display_screen(input[1],1);
 	display_screen(input[2],2);
