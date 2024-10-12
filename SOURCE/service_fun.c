@@ -17,28 +17,26 @@ description : 存放了一些用于程序运行的功能函数
 #define  			CLOCK_MOD			5
 
 // 定义的变量
-unsigned char mins = 0;
-unsigned char hours = 0;
-unsigned char day = 1;
-unsigned char mounth = 1;
-unsigned int year = 0; 
+unsigned int mins = 0;
+unsigned int hours = 0;
+unsigned int day = 1;
+unsigned int mounth = 1;
+unsigned int year = 2000; 
 int min_time = 0; 
 
-unsigned int count1 = 0;  //用于计数，窗口1
-unsigned int count2 = 0;  //用于计数，窗口2
-unsigned int count3 = 0;  //用于计数，窗口3
+unsigned char window1_num[] = "0000";  //用于计数，窗口1
+unsigned char window2_num[] = "0000";  //用于计数，窗口2
+unsigned char window3_num[] = "0000";  //用于计数，窗口3
 unsigned char windows = WINDOW1;  // 用于窗口标记，默认为窗口1
 
 // 该函数用于数字转字符串,将四位整数转化为字符串
 // 注意数字为无符号整数，一定要大于0
-unsigned char* num2str(unsigned int num)
+void num2str(unsigned int num,unsigned char* str)
 {
-	static unsigned char str[] = "0000";
 	str[3] = num%10+'0';
 	str[2] = (num/10)%10+'0';
 	str[1] = (num/100)%10+'0';
 	str[0] = (num/1000)%10+'0';
-	return str;
 }
 
 // 该函数用于显示对应窗口
@@ -47,13 +45,13 @@ void display_windows()
 	switch (windows)
 	{
 	case WINDOW1:
-		display_str_once(num2str(count1));
+		display_str_once(window1_num);
 		break;
 	case WINDOW2:
-		display_str_once(num2str(count2));
+		display_str_once(window2_num);
 		break;
 	case WINDOW3:
-		display_str_once(num2str(count3));
+		display_str_once(window3_num);
 		break;
 	default:
 		display_str_once("----");
@@ -66,10 +64,14 @@ void clock() interrupt 1
 {
 	// 标志位清零
 	TF0 = 0;
-	// 定时60ms
+	// min_time为60ms
 	TL0 = (65536 - 60000)%256;
 	TH0 = (65536 - 60000)/256;
 	min_time++;
+	time_carry();  // 日历进位操作
+	num2str(mins+hours*100,window1_num);
+	num2str(day+mounth*100,window1_num);
+	num2str(year,window1_num);
 }
 
 void time_carry()
@@ -79,17 +81,18 @@ void time_carry()
 		mins++;
 		min_time = 0;
 	}
-	if(mins == 60)
+	if(mins == 60)   //60分钟进1小时
 	{
 		hours++;
 		mins = 0;
 	}
-	if(hours == 24)
+	if(hours == 24)	 //24小时进1天
 	{
 		day++;
 		hours = 0;
 	}
 
+	// 年月日进位
     if((years%4 == 0)&&(years%100 != 0)||(years%400 == 0))   // 闰年
     {
         switch (mounth)
