@@ -234,10 +234,10 @@ void key_fucntions()
         // 归零秒表计数
         stopwatch_sec = 0;
         stopwatch_10ms = 0;
-				stopwatch_window_num[0] = '0';
-				stopwatch_window_num[1] = '0';
-				stopwatch_window_num[2] = '0';
-				stopwatch_window_num[3] = '0';
+        stopwatch_window_num[0] = '0';
+        stopwatch_window_num[1] = '0';
+        stopwatch_window_num[2] = '0';
+        stopwatch_window_num[3] = '0';
     }
     // 当按键3被按下的时候，切换当前模式
     if((key_state>>2) & 1)
