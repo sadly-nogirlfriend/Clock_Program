@@ -18,23 +18,26 @@ description : 存放了一些用于程序运行的功能函数
 #define  			CLOCK_MOD			6
 #define 			STOPWATCH_MOD		7
 
-// 定义的变量
+// 时间变量区
 unsigned int second = 0;
 unsigned int mins = 21;
 unsigned int hours = 11;
 unsigned int day = 14;
 unsigned int mounth = 10;
 unsigned int year = 2024;
-unsigned int stopwatch = 0;
 int min_time = 0; 
+unsigned int stopwatch_sec = 0;  // 秒表计数
+unsigned int stopwatch_10ms = 0;
 
 unsigned char window1_num[] = "0000";  // 用于计数，窗口1
 unsigned char window2_num[] = "0000";  // 用于计数，窗口2
 unsigned char window3_num[] = "0000";  // 用于计数，窗口3
 unsigned char stopwatch_window_num[] = "0000";	// 用于计数，秒表窗口
+
+// 标记变量区
 unsigned char windows = WINDOW1;  	   // 窗口标记，默认为窗口1
 unsigned char Mod = CLOCK_MOD;	  	   // 模式标记，默认为时钟模式
-
+unsigned char stopwatch_state = 0;     // 秒表开关标记
 // 该函数用于日历的进位计算
 void time_carry()
 {
@@ -187,10 +190,24 @@ void display_windows()
 	}
 }
 
-void key1_fucntions()
+void stopwatch_function()
 {
+    if(stopwatch_state)
+    {
+        TR1 = 1;
+    }
+    else
+    {
+        TR1 = 0;
+    }
+}
+
+void key_fucntions()
+{
+    unsigned char key_state = 0x0;      // 用于储存按键状态
+    key_state = Key_State_Scan(MODEL1);
 	// 当模式为时钟模式的时候，按键1的作用是切换窗口，分别显示年月时分
-	if(((Key_State_Scan(MODEL1)>>0) & 1 )&&(Mod == CLOCK_MOD))
+	if(((key_state>>0) & 1 )&&(Mod == CLOCK_MOD))
 	{
 		windows++;
 		if(windows == WINDOW3 + 1)
@@ -199,15 +216,31 @@ void key1_fucntions()
 		}
 	}
 	// 当模式为秒表模式的时候，按键1的作用是开始和停止秒表
-	if(((Key_State_Scan(MODEL1)>>0) & 1 )&&(Mod == STOPWATCH_MOD))
+	if(((key_state>>0) & 1 )&&(Mod == STOPWATCH_MOD))
 	{
-		// ~stopwatch_state;
+		stopwatch_state = ~stopwatch_state;
 	}
-}
-
-void key3_switch_mod()
-{
-	if((Key_State_Scan(MODEL1)>>2) & 1)
+    // 当按键2被按下的时候，清零秒表
+    if((key_state>>1) & 1)
+    {
+				stopwatch_state = 0;
+        // 关闭T1定时器
+        TR1 = 0;
+        // 标志位清零
+        TF1 = 0;
+        // 重置TL1,TH1
+        TL1 = (65536 - 10000)%256;
+        TH1 = (65536 - 10000)/256;
+        // 归零秒表计数
+        stopwatch_sec = 0;
+        stopwatch_10ms = 0;
+				stopwatch_window_num[0] = '0';
+				stopwatch_window_num[1] = '0';
+				stopwatch_window_num[2] = '0';
+				stopwatch_window_num[3] = '0';
+    }
+    // 当按键3被按下的时候，切换当前模式
+    if((key_state>>2) & 1)
 	{
 		Mod++;
 		if(Mod == STOPWATCH_MOD+1)
@@ -231,6 +264,35 @@ void clock() interrupt 1
 	num2str(mins+hours*100,window1_num);
 	num2str(day+mounth*100,window2_num);
 	num2str(year,window3_num);
+}
+
+void stopwatch() interrupt 3
+{
+    // 标志位清零
+    TF1 = 0;
+    // 定时10ms(一般秒表显示的最小单位就为10ms)
+    TL1 = (65536 - 10000)%256;
+    TH1 = (65536 - 10000)/256;
+    stopwatch_10ms++;
+    // 进位
+    if(stopwatch_10ms == 100)
+    {
+        stopwatch_sec++;
+        stopwatch_10ms = 0;
+    }
+    if(stopwatch_sec == 61)
+    {
+        stopwatch_sec = 0; // 设定最长秒表计时60s
+    }
+
+    /*********************************************************
+     * 注意，因为两个中断重用了同一个函数，如果在其中一个中断函数执
+     * 行期间，另一个中断打断了当前终端，那么重用的函数传入的参数将
+     * 会被覆写，可能造成一定问题。在这里，我们使用OVERLAY进行解决，
+     * 在配置文件中为该函数添加单独的内存空间，将两个中断函数排除在
+     * 重叠分析之外，防止中断间的串扰。具体用法参考OVERLAY文档。
+    *********************************************************/
+    num2str(stopwatch_10ms+stopwatch_sec*100,stopwatch_window_num);
 }
 
 

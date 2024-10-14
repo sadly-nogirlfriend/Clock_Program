@@ -230,7 +230,7 @@
               <RCB>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0xffff</Size>
               </RCB>
               <RXB>
                 <Type>0</Type>
@@ -333,7 +333,7 @@
             <CaseSensitiveSymbols>0</CaseSensitiveSymbols>
             <WarningLevel>2</WarningLevel>
             <DataOverlaying>1</DataOverlaying>
-            <OverlayString></OverlayString>
+            <OverlayString>?PR?CLOCK?SERVICE_FUN~?PR?_NUM2STR?SERVICE_FUN</OverlayString>
             <MiscControls></MiscControls>
             <DisableWarningNumbers></DisableWarningNumbers>
             <LinkerCmdFile></LinkerCmdFile>
@@ -364,6 +364,16 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
+              <FileName>service_fun.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SOURCE\service_fun.c</FilePath>
+            </File>
+            <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SOURCE\interrupt.c</FilePath>
+            </File>
+            <File>
               <FileName>key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SOURCE\key.c</FilePath>
@@ -377,16 +387,6 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SOURCE\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>service_fun.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SOURCE\service_fun.c</FilePath>
-            </File>
-            <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SOURCE\interrupt.c</FilePath>
             </File>
             <File>
               <FileName>timer.c</FileName>

@@ -11,14 +11,15 @@ sbit LED2 = P2^5;
 void main()
 {
 	Interrupt_init();	// 中断初始化
-	T1_Init();		// 定时器初始化
-	display_str("----",2000);  // 初始化提醒
+	display_str("----",2000);  // 开机提醒
 	LED1 = ~LED1;
 	LED2 = ~LED2;
-	T0_Init();		// 开始计时
+	T1_Init();		// 用作秒表的T1定时器初始化
+	T0_Init();		// 用作时钟的T2定时器开始计时
 	while(1)
 	{
-		key1_fucntions();
+		key_fucntions();
+		stopwatch_function();
 		display_windows();
 	}
 }
