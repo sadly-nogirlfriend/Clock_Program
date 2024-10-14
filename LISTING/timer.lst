@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TIMER                                                                 10/12/2024 12:33:57 PAGE 1   
+C51 COMPILER V9.54   TIMER                                                                 10/15/2024 00:55:23 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TIMER
@@ -21,49 +21,50 @@ line level    source
   11   1          TL0 = (65536 - 60000)%256;
   12   1          TH0 = (65536 - 60000)/256;
   13   1      }
-  14          void T1_Init()
-  15          {
-  16   1          TMOD = (TMOD & 0x0F) + 0x10;    // 将TMOD前四位初始化，16位计数模式。
-  17   1          TR1 = 1;
-  18   1      }
-  19          
-  20          void short_delay_5ms()
-  21          {
-  22   1          TF1 = 0;                  // 在计数0点将标志位置1
-  23   1          TL1 = (65536-5000)%256;  // 低八位初始化
-  24   1          TH1 = (65536-5000)/256;  // 高八位初始化
-  25   1          while(TF1 == 0);
-  26   1      }
-  27          
-  28          void Timer_delay_50ms()
-  29          {
-  30   1        TF1 = 0;                  // 在计数0点将标志位置1
-  31   1          TL1 = (65536-50000)%256;  // 低八位初始化
-  32   1          TH1 = (65536-50000)/256;  // 高八位初始化
-  33   1          while(TF1 == 0);
+  14          
+  15          /*******************************************************************
+  16          注意，定时器T1用于秒表，由开关控制闭合，因此初始化时设定关闭定时器开关TR
+             -1
+  17          *******************************************************************/
+  18          void T1_Init()
+  19          {
+  20   1          TMOD = (TMOD & 0x0F) + 0x10;    // 将TMOD前四位初始化，16位计数模式。
+  21   1          TR1 = 0;
+  22   1          // 标志位清零
+  23   1          TF1 = 0;
+  24   1          // 定时1ms
+  25   1          TL1 = (65536 - 1000)%256;
+  26   1          TH1 = (65536 - 1000)/256;
+  27   1      }
+  28          
+  29          void short_delay_5ms()
+  30          {
+  31   1        unsigned char data i,j;
+  32   1        for(j=0;j<14;j++)
+  33   1          {for(i=0;i<117;i++);}
   34   1      }
   35          
-  36          // 最小延时时间位50ms，延时毫秒为50ms的整数倍
+  36          // 最小延时时间位50ms，延时毫秒为5ms的整数倍
   37          void Timer_long_delay_Xms(unsigned int xms)
   38          {
   39   1          unsigned int i;
-  40   1          for(i = 0;i < xms/50;i++)
+  40   1          for(i = 0;i < xms/5;i++)
   41   1          {
-  42   2              Timer_delay_50ms();
+  42   2              short_delay_5ms();
   43   2          }
   44   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     87    ----
+   CODE SIZE        =     84    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =   ----    ----
-C51 COMPILER V9.54   TIMER                                                                 10/12/2024 12:33:57 PAGE 2   
+C51 COMPILER V9.54   TIMER                                                                 10/15/2024 00:55:23 PAGE 2   
 
+   BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 

@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  10/12/2024 12:33:57 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  10/15/2024 00:55:23 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -21,22 +21,23 @@ line level    source
   11          void main()
   12          {
   13   1        Interrupt_init(); // 中断初始化
-*** WARNING C206 IN LINE 13 OF ..\SOURCE\main.c: 'Interrupt_init': missing function-prototype
-  14   1        T1_Init();    // 定时器初始化
-  15   1        display_str("----",2000);  // 初始化提醒
-  16   1        LED1 = ~LED1;
-  17   1        LED2 = ~LED2;
-  18   1        T0_Init();    // 开始计时
+  14   1        display_str("----",2000);  // 开机提醒
+  15   1        LED1 = ~LED1;
+  16   1        LED2 = ~LED2;
+  17   1        T1_Init();    // 用作秒表的T1定时器初始化
+  18   1        T0_Init();    // 用作时钟的T2定时器开始计时
   19   1        while(1)
   20   1        {
-  21   2          display_windows();
-  22   2        }
-  23   1      }
-  24          
+  21   2          key_fucntions();
+  22   2          stopwatch_function();
+  23   2          display_windows();
+  24   2        }
+  25   1      }
+  26          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     31    ----
+   CODE SIZE        =     37    ----
    CONSTANT SIZE    =      5    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
@@ -46,4 +47,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
