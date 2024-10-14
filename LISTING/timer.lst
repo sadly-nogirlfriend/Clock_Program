@@ -1,0 +1,71 @@
+C51 COMPILER V9.54   TIMER                                                                 10/15/2024 00:55:23 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN ..\OUTPUT\timer.obj
+COMPILER INVOKED BY: E:\Keil_C51\C51\BIN\C51.EXE ..\SOURCE\timer.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\SOURCE) DEBUG OBJE
+                    -CTEXTEND PRINT(..\LISTING\timer.lst) TABS(2) OBJECT(..\OUTPUT\timer.obj)
+
+line level    source
+
+   1          #include "timer.h"
+   2          #include "REG51.H"
+   3          
+   4          void T0_Init()
+   5          {
+   6   1          TMOD = (TMOD & 0xF0) + 0x01;    // 将TMOD后四位初始化，16位计数模式。
+   7   1          TR0 = 1;
+   8   1          // 标志位清零
+   9   1          TF0 = 0;
+  10   1          // 定时60ms
+  11   1          TL0 = (65536 - 60000)%256;
+  12   1          TH0 = (65536 - 60000)/256;
+  13   1      }
+  14          
+  15          /*******************************************************************
+  16          注意，定时器T1用于秒表，由开关控制闭合，因此初始化时设定关闭定时器开关TR
+             -1
+  17          *******************************************************************/
+  18          void T1_Init()
+  19          {
+  20   1          TMOD = (TMOD & 0x0F) + 0x10;    // 将TMOD前四位初始化，16位计数模式。
+  21   1          TR1 = 0;
+  22   1          // 标志位清零
+  23   1          TF1 = 0;
+  24   1          // 定时1ms
+  25   1          TL1 = (65536 - 1000)%256;
+  26   1          TH1 = (65536 - 1000)/256;
+  27   1      }
+  28          
+  29          void short_delay_5ms()
+  30          {
+  31   1        unsigned char data i,j;
+  32   1        for(j=0;j<14;j++)
+  33   1          {for(i=0;i<117;i++);}
+  34   1      }
+  35          
+  36          // 最小延时时间位50ms，延时毫秒为5ms的整数倍
+  37          void Timer_long_delay_Xms(unsigned int xms)
+  38          {
+  39   1          unsigned int i;
+  40   1          for(i = 0;i < xms/5;i++)
+  41   1          {
+  42   2              short_delay_5ms();
+  43   2          }
+  44   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     84    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.54   TIMER                                                                 10/15/2024 00:55:23 PAGE 2   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

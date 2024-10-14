@@ -7,6 +7,11 @@ description : 该文件存放了一些用于显示led和led数码管的
 
 #include "led.h"
 #include <reg51.h>
+#include "timer.h"
+
+// 宏定义数字管的段码io口和位选io口
+#define				GPIO_DIG				P1       // 段码
+#define				GPIO_PLACE				P2		 // 位选
 
 // led段码表,存放在rom中
 unsigned char code leddata[]={ 
@@ -37,28 +42,16 @@ unsigned char code leddata[]={
                 0x91   //"y"
                          };
 
-// 延时X毫秒的函数
-void DelayXms(unsigned int xms)
-{
-
-	unsigned int i,j;
-	for(i=xms;i>0;i--)
-	{
-		for(j=0;j<124;j++);
-	}
-}
-
 // 用于让数码管静态显示
 // display_screen(input,signature)
 // input为需要输入的字符，signature为选位
 // 该函数的显示过程已经进行了消影处理
 void display_screen(unsigned char input,unsigned char signature)
 {
-	unsigned char temp = 0xf1;
+	unsigned char temp = 0x01;
 	// 设置选位
 	if(signature>=0&&signature<=3)
-		GPIO_PLACE = temp << signature;
-	
+		GPIO_PLACE = (GPIO_PLACE & 0xf0) + (temp << signature);  // 保留高四位,变更低四位
 	
 	if((input>='0')&&(input<='9'))
 		GPIO_DIG = leddata[input-'0'];
@@ -82,11 +75,11 @@ void display_screen(unsigned char input,unsigned char signature)
 		GPIO_DIG = leddata[23];
 	else if(input=='y')
 		GPIO_DIG = leddata[24];
-	DelayXms(5);
+	short_delay_5ms();
 	
 	// 消影
 	GPIO_DIG = 0xff;
-	DelayXms(5);
+	short_delay_5ms();
 }
 
 // 用于让数码管在xms内动态显示一组数组
@@ -103,8 +96,9 @@ void display_str(unsigned char *input,unsigned int xms)
 }
 
 // 用于让数码管动态显示一次数组，一次的显示时长约为40ms
-void display_str_once(unsigned char *input)
+void display_str_once(unsigned char* input)
 {
+//	input[0] = '0' ;
 	display_screen(input[0],0);
 	display_screen(input[1],1);
 	display_screen(input[2],2);

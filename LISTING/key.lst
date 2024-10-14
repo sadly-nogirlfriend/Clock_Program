@@ -1,0 +1,126 @@
+C51 COMPILER V9.54   KEY                                                                   10/15/2024 00:55:22 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE KEY
+OBJECT MODULE PLACED IN ..\OUTPUT\key.obj
+COMPILER INVOKED BY: E:\Keil_C51\C51\BIN\C51.EXE ..\SOURCE\key.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\SOURCE) DEBUG OBJECT
+                    -EXTEND PRINT(..\LISTING\key.lst) TABS(2) OBJECT(..\OUTPUT\key.obj)
+
+line level    source
+
+   1          /*******************************************************
+   2          file.name : key.c
+   3          version : 1.1
+   4          description : 存放了一些用于按键的功能函数
+   5          *******************************************************/
+   6          
+   7          #include "key.h"
+   8          #include "led.h"
+   9          #include <reg51.h>
+  10          #include "timer.h"
+  11          
+  12          // 定义按键的状态
+  13          #define       KEY1_ON       0x1   //0001
+  14          #define       KEY2_ON       0x2   //0010
+  15          #define       KEY3_ON       0x4   //0100
+  16          #define       KEY4_ON       0x8   //1000
+  17          
+  18          // 定义按键io口
+  19          sbit key1 = P0^0;
+  20          sbit key2 = P0^1;
+  21          sbit key3 = P0^2;
+  22          sbit key4 = P0^3;
+  23          
+  24          // 定义变量
+  25          unsigned char key_state = 0x0;
+  26          unsigned char mark = 0;
+  27          
+  28          // 扫描指定的io口电平，查看开关的开合
+  29          // 输出的是一个四位二进制数，其对应的二进制数就是开关开合的状态
+  30          // 从低位到高位是开关1到4
+  31          // 按键的扫描有两个模式:
+  32          // MODEL1为按钮模式，按下为1，松开为0
+  33          // MODEL2为开关模式，按键切换1和0的状态
+  34          unsigned char Key_State_Scan(unsigned char model)
+  35          {
+  36   1        unsigned char key_state_1 = 0x0;
+  37   1        if(model == MODEL1)   //模式1，使用局部变量
+  38   1        {
+  39   2          if(!key1 || !key2 || !key3 || !key4)  // 检测是否有按键被按下
+  40   2          {
+  41   3            if(mark == 0)
+  42   3            {
+  43   4              short_delay_5ms();    //消抖
+  44   4              if(!key1)
+  45   4              {
+  46   5                key_state_1 = key_state_1 + KEY1_ON;  //按键赋值
+  47   5              }
+  48   4              if(!key2)
+  49   4              {
+  50   5                key_state_1 = key_state_1 + KEY2_ON;
+  51   5              }
+  52   4              if(!key3)
+  53   4              {
+  54   5                key_state_1 = key_state_1 + KEY3_ON;
+C51 COMPILER V9.54   KEY                                                                   10/15/2024 00:55:22 PAGE 2   
+
+  55   5              }
+  56   4              if(!key4)
+  57   4              {
+  58   5                key_state_1 = key_state_1 + KEY4_ON;
+  59   5              }
+  60   4              mark = 1;
+  61   4            }
+  62   3          }
+  63   2          else
+  64   2          {
+  65   3            mark = 0;
+  66   3          }
+  67   2          key_state = key_state_1;
+  68   2        }
+  69   1        if(model == MODEL2)   //模式2，使用静态变量
+  70   1        {
+  71   2          if(!key1 || !key2 || !key3 || !key4)  // 检测是否有按键被按下
+  72   2          {
+  73   3            if(mark == 0)
+  74   3            {
+  75   4              short_delay_5ms();    //消抖
+  76   4              if(!key1)
+  77   4              {
+  78   5                key_state = key_state ^ (1 << 0);  //按键赋值，按位取反
+  79   5              }
+  80   4              if(!key2)
+  81   4              {
+  82   5                key_state = key_state ^ (1 << 1);
+  83   5              }
+  84   4              if(!key3)
+  85   4              {
+  86   5                key_state = key_state ^ (1 << 2);
+  87   5              }
+  88   4              if(!key4)
+  89   4              {
+  90   5                key_state = key_state ^ (1 << 3);
+  91   5              }
+  92   4            }
+  93   3          }
+  94   2          else
+  95   2          {
+  96   3            mark = 1;
+  97   3          }
+  98   2        }
+  99   1        return key_state;
+ 100   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    128    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

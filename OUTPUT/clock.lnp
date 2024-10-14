@@ -1,0 +1,8 @@
+"..\OUTPUT\service_fun.obj",
+"..\OUTPUT\interrupt.obj",
+"..\OUTPUT\key.obj",
+"..\OUTPUT\led.obj",
+"..\OUTPUT\main.obj",
+"..\OUTPUT\timer.obj" 
+TO "..\OUTPUT\clock" 
+PRINT("..\LISTING\clock.m51") OVERLAY( ?PR?CLOCK?SERVICE_FUN~?PR?_NUM2STR?SERVICE_FUN )

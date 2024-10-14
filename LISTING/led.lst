@@ -1,0 +1,134 @@
+C51 COMPILER V9.54   LED                                                                   10/15/2024 00:55:22 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE LED
+OBJECT MODULE PLACED IN ..\OUTPUT\led.obj
+COMPILER INVOKED BY: E:\Keil_C51\C51\BIN\C51.EXE ..\SOURCE\led.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\SOURCE) DEBUG OBJECT
+                    -EXTEND PRINT(..\LISTING\led.lst) TABS(2) OBJECT(..\OUTPUT\led.obj)
+
+line level    source
+
+   1          /*******************************************************
+   2          file.name : led.c
+   3          version : 1.1
+   4          description : 该文件存放了一些用于显示led和led数码管的
+   5          相关函数。
+   6          *******************************************************/
+   7          
+   8          #include "led.h"
+   9          #include <reg51.h>
+  10          #include "timer.h"
+  11          
+  12          // 宏定义数字管的段码io口和位选io口
+  13          #define       GPIO_DIG        P1       // 段码
+  14          #define       GPIO_PLACE        P2     // 位选
+  15          
+  16          // led段码表,存放在rom中
+  17          unsigned char code leddata[]={ 
+  18                          0xC0,  //"0"
+  19                          0xF9,  //"1"
+  20                          0xA4,  //"2"
+  21                          0xB0,  //"3"
+  22                          0x99,  //"4"
+  23                          0x92,  //"5"
+  24                          0x82,  //"6"
+  25                          0xF8,  //"7"
+  26                          0x80,  //"8"
+  27                          0x90,  //"9"
+  28                          0x88,  //"A"
+  29                          0x83,  //"B"
+  30                          0xC6,  //"C"
+  31                          0xA1,  //"D"
+  32                          0x86,  //"E"
+  33                          0x8E,  //"F"
+  34                          0x89,  //"H"
+  35                          0xC7,  //"L"
+  36                          0xC8,  //"n"
+  37                          0xC1,  //"u"
+  38                          0x8C,  //"P"
+  39                          0xA3,  //"o"
+  40                          0xBF,  //"-"
+  41                          0xFF,  //熄灭
+  42                          0x91   //"y"
+  43                                   };
+  44          
+  45          // 用于让数码管静态显示
+  46          // display_screen(input,signature)
+  47          // input为需要输入的字符，signature为选位
+  48          // 该函数的显示过程已经进行了消影处理
+  49          void display_screen(unsigned char input,unsigned char signature)
+  50          {
+  51   1        unsigned char temp = 0x01;
+  52   1        // 设置选位
+  53   1        if(signature>=0&&signature<=3)
+  54   1          GPIO_PLACE = (GPIO_PLACE & 0xf0) + (temp << signature);  // 保留高四位,变更低四位
+C51 COMPILER V9.54   LED                                                                   10/15/2024 00:55:22 PAGE 2   
+
+  55   1        
+  56   1        if((input>='0')&&(input<='9'))
+  57   1          GPIO_DIG = leddata[input-'0'];
+  58   1        else if((input>='A')&&(input<='F'))
+  59   1          GPIO_DIG = leddata[input-'A'+10];
+  60   1        else if(input=='H')
+  61   1          GPIO_DIG = leddata[16];
+  62   1        else if(input=='L')
+  63   1          GPIO_DIG = leddata[17];
+  64   1        else if(input=='n')
+  65   1          GPIO_DIG = leddata[18];
+  66   1        else if(input=='u')
+  67   1          GPIO_DIG = leddata[19];
+  68   1        else if(input=='p')
+  69   1          GPIO_DIG = leddata[20];
+  70   1        else if(input=='o')
+  71   1          GPIO_DIG = leddata[21];
+  72   1        else if(input=='-')
+  73   1          GPIO_DIG = leddata[22];
+  74   1        else if(input=='*') // 表示熄灭
+  75   1          GPIO_DIG = leddata[23];
+  76   1        else if(input=='y')
+  77   1          GPIO_DIG = leddata[24];
+  78   1        short_delay_5ms();
+  79   1        
+  80   1        // 消影
+  81   1        GPIO_DIG = 0xff;
+  82   1        short_delay_5ms();
+  83   1      }
+  84          
+  85          // 用于让数码管在xms内动态显示一组数组
+  86          void display_str(unsigned char *input,unsigned int xms)
+  87          {
+  88   1        unsigned char i = 0;
+  89   1        for(i=0;i<xms/40;i++)
+  90   1        {
+  91   2          display_screen(input[0],0);
+  92   2          display_screen(input[1],1);
+  93   2          display_screen(input[2],2);
+  94   2          display_screen(input[3],3);
+  95   2        }
+  96   1      }
+  97          
+  98          // 用于让数码管动态显示一次数组，一次的显示时长约为40ms
+  99          void display_str_once(unsigned char* input)
+ 100          {
+ 101   1      //  input[0] = '0' ;
+ 102   1        display_screen(input[0],0);
+ 103   1        display_screen(input[1],1);
+ 104   1        display_screen(input[2],2);
+ 105   1        display_screen(input[3],3);
+ 106   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    327    ----
+   CONSTANT SIZE    =     25    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       9
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V9.54   LED                                                                   10/15/2024 00:55:22 PAGE 3   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
