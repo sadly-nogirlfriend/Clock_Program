@@ -19,11 +19,13 @@ description : 存放了一些用于程序运行的功能函数
 #define 			STOPWATCH_MOD		7
 
 // 定义的变量
-unsigned int mins = 0;
-unsigned int hours = 0;
-unsigned int day = 1;
-unsigned int mounth = 1;
-unsigned int year = 2000; 
+unsigned int second = 0;
+unsigned int mins = 21;
+unsigned int hours = 11;
+unsigned int day = 14;
+unsigned int mounth = 10;
+unsigned int year = 2024;
+unsigned int stopwatch = 0;
 int min_time = 0; 
 
 unsigned char window1_num[] = "0000";  // 用于计数，窗口1
@@ -185,9 +187,10 @@ void display_windows()
 	}
 }
 
-void key1_switch_windows()
+void key1_fucntions()
 {
-	if( (Key_State_Scan(MODEL1)>>0) & 1)
+	// 当模式为时钟模式的时候，按键1的作用是切换窗口，分别显示年月时分
+	if(((Key_State_Scan(MODEL1)>>0) & 1 )&&(Mod == CLOCK_MOD))
 	{
 		windows++;
 		if(windows == WINDOW3 + 1)
@@ -195,9 +198,24 @@ void key1_switch_windows()
 			windows = WINDOW1;
 		}
 	}
+	// 当模式为秒表模式的时候，按键1的作用是开始和停止秒表
+	if(((Key_State_Scan(MODEL1)>>0) & 1 )&&(Mod == STOPWATCH_MOD))
+	{
+		// ~stopwatch_state;
+	}
 }
 
-void key2_stop_watch();
+void key3_switch_mod()
+{
+	if((Key_State_Scan(MODEL1)>>2) & 1)
+	{
+		Mod++;
+		if(Mod == STOPWATCH_MOD+1)
+		{
+			Mod = CLOCK_MOD;
+		}
+	}
+}
 
 
 // 窗口分配：window1 用于时钟
@@ -214,4 +232,5 @@ void clock() interrupt 1
 	num2str(day+mounth*100,window2_num);
 	num2str(year,window3_num);
 }
+
 

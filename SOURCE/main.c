@@ -18,7 +18,7 @@ void main()
 	T0_Init();		// 开始计时
 	while(1)
 	{
-		key1_switch_windows();
+		key1_fucntions();
 		display_windows();
 	}
 }

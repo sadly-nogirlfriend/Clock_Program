@@ -31,7 +31,7 @@ unsigned char mark = 0;
 // 按键的扫描有两个模式:
 // MODEL1为按钮模式，按下为1，松开为0
 // MODEL2为开关模式，按键切换1和0的状态
-unsigned char Key_State_Scan(unsigned char model,unsigned char wait_mod)
+unsigned char Key_State_Scan(unsigned char model)
 {
 	unsigned char key_state_1 = 0x0;
 	if(model == MODEL1)		//模式1，使用局部变量
