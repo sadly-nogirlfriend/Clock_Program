@@ -19,7 +19,7 @@ CPU DLL:         S8051.DLL V3.100.0.0
 Dialog DLL:      DP51.DLL V2.62.0.1 
 <h2>Project:</h2>
 E:\c51\keil_c51\clock\PROJECT\clock.uvproj
-Project File Date:  10/03/2024
+Project File Date:  10/15/2024
 
 <h2>Output:</h2>
 Rebuild target 'Target 1'
@@ -32,9 +32,16 @@ compiling timer.c...
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_TIMER_LONG_DELAY_XMS?TIMER
-Program Size: data=63.0 xdata=0 code=2083
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_DISPLAY_STR_ONCE?LED
+    CALLER1: ?PR?CLOCK_FIXED?SERVICE_FUN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L5: CODE SPACE MEMORY OVERLAP
+    FROM:    0003H
+    TO:      0005H
+Program Size: data=70.0 xdata=0 code=2231
 creating hex file from "..\OUTPUT\clock"...
-"..\OUTPUT\clock" - 0 Error(s), 1 Warning(s).
+"..\OUTPUT\clock" - 0 Error(s), 3 Warning(s).
 </pre>
 </body>
 </html>

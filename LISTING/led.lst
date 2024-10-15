@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   10/15/2024 00:55:22 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   10/15/2024 20:50:49 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -62,7 +62,7 @@ line level    source
   52   1        // 设置选位
   53   1        if(signature>=0&&signature<=3)
   54   1          GPIO_PLACE = (GPIO_PLACE & 0xf0) + (temp << signature);  // 保留高四位,变更低四位
-C51 COMPILER V9.54   LED                                                                   10/15/2024 00:55:22 PAGE 2   
+C51 COMPILER V9.54   LED                                                                   10/15/2024 20:50:49 PAGE 2   
 
   55   1        
   56   1        if((input>='0')&&(input<='9'))
@@ -126,7 +126,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    DATA SIZE        =   ----       9
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V9.54   LED                                                                   10/15/2024 00:55:22 PAGE 3   
+C51 COMPILER V9.54   LED                                                                   10/15/2024 20:50:49 PAGE 3   
 
 END OF MODULE INFORMATION.
 

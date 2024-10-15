@@ -38,6 +38,8 @@ unsigned char stopwatch_window_num[] = "0000";	// 用于计数，秒表窗口
 unsigned char windows = WINDOW1;  	   // 窗口标记，默认为窗口1
 unsigned char Mod = CLOCK_MOD;	  	   // 模式标记，默认为时钟模式
 unsigned char stopwatch_state = 0;     // 秒表开关标记
+unsigned int blinked_mark = 0;         // 屏幕闪烁定时标记
+unsigned char blinked_screen_State = 1;// 屏幕闪烁状态标记
 // 该函数用于日历的进位计算
 void time_carry()
 {
@@ -148,6 +150,44 @@ void time_carry()
             break;
         }
 	}
+}
+// 该函数用于时钟校正时的按键功能设置
+// void fixed_clock_function();
+// 该函数用于时钟校正时的屏幕显示
+void blinked_display_windows()
+{
+    // 屏幕闪烁处理
+    blinked_mark++;
+    if(blinked_mark == 200)
+    {
+        blinked_screen_State = ~blinked_screen_State;
+    }
+
+    // 屏幕闪烁显示
+    switch (windows)
+    {
+    case WINDOW1:
+        if(blinked_screen_State)
+        {
+            display_str_once(window1_num);
+        }
+        break;
+    case WINDOW2:
+        if(blinked_screen_State)
+        {
+            display_str_once(window2_num);
+        }
+        break;
+    case WINDOW3:
+        if(blinked_screen_State)
+        {
+            display_str_once(window3_num);
+        }
+        break;
+    
+    default:
+        break;
+    }
 }
 
 // 该函数用于数字转字符串,将四位整数转化为字符串
@@ -293,6 +333,24 @@ void stopwatch() interrupt 3
      * 重叠分析之外，防止中断间的串扰。具体用法参考OVERLAY文档。
     *********************************************************/
     num2str(stopwatch_10ms+stopwatch_sec*100,stopwatch_window_num);
+}
+
+// 按下按键5进入中断
+void clock_fixed() interrupt 0
+{
+    unsigned char fixed__state = 1;
+    // 关闭中断开关，防止二次进入中断
+    EX0 = 0;
+    while(fixed__state)
+    {
+        // 屏幕闪烁显示
+        blinked_display_windows();
+        // 进行一次按键扫描
+        // unsigned char fixed_key_state = Key_State_Scan(MODEL1);
+        // 按键1切换时间窗口
+        // 按键2切换位数
+        // 按键3加、按键4减
+    }
 }
 
 
