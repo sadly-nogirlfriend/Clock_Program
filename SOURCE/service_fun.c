@@ -368,7 +368,7 @@ void stopwatch() interrupt 3
     num2str(stopwatch_10ms+stopwatch_sec*100,stopwatch_window_num);
 }
 
-// 按下按键5进入中断
+// 按下按键5进入中断,开始校正时钟
 void clock_fixed() interrupt 0
 {
     unsigned char fixed__state = 1;
