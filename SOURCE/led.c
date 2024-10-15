@@ -104,3 +104,35 @@ void display_str_once(unsigned char* input)
 	display_screen(input[2],2);
 	display_screen(input[3],3);
 }
+
+// 用于让数码管动态显示一次数组，且指定其中的一个位数不亮
+// 该函数只是用于闪烁
+// 一次的显示时长约为40ms
+void blinked_display_str_once(unsigned char* input, unsigned char blinked_bit)
+{
+	switch (blinked_bit)
+	{
+	case 1:
+		display_screen(input[0],0);
+		display_screen(input[1],1);
+		display_screen(input[2],2);
+		break;
+	case 2:
+		display_screen(input[0],0);
+		display_screen(input[1],1);
+		display_screen(input[3],3);
+		break;
+	case 3:
+		display_screen(input[0],0);
+		display_screen(input[2],2);
+		display_screen(input[3],3);
+		break;
+	case 4:
+		display_screen(input[1],1);
+		display_screen(input[2],2);
+		display_screen(input[3],3);
+		break;
+	default:
+		break;
+	}
+}

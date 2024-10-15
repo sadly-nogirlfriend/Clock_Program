@@ -129,52 +129,20 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGDP51</Key>
-          <Name>(98=-1,-1,-1,-1,0)(82=1130,347,1328,452,1)(83=-1,-1,-1,-1,0)(84=-1,-1,-1,-1,0)(85=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(91=-1,-1,-1,-1,0)(92=-1,-1,-1,-1,0)</Name>
+          <Name>(98=-1,-1,-1,-1,0)(82=952,312,1150,417,0)(83=-1,-1,-1,-1,0)(84=-1,-1,-1,-1,0)(85=811,265,1009,370,1)(80=-1,-1,-1,-1,0)(91=-1,-1,-1,-1,0)(92=-1,-1,-1,-1,0)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>21</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>-16775284</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>SOURCE\MAIN.C</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\clock\MAIN\21</Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Mod</ItemText>
+          <ItemText>blinked_mark</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>stopwatch_sec</ItemText>
-        </Ww>
-        <Ww>
-          <count>2</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>TR1</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>TL1</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>stopwatch_state</ItemText>
+          <ItemText>blinked_screen_State</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

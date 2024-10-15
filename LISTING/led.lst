@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   10/15/2024 20:50:49 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   10/16/2024 01:15:44 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -62,7 +62,7 @@ line level    source
   52   1        // 设置选位
   53   1        if(signature>=0&&signature<=3)
   54   1          GPIO_PLACE = (GPIO_PLACE & 0xf0) + (temp << signature);  // 保留高四位,变更低四位
-C51 COMPILER V9.54   LED                                                                   10/15/2024 20:50:49 PAGE 2   
+C51 COMPILER V9.54   LED                                                                   10/16/2024 01:15:44 PAGE 2   
 
   55   1        
   56   1        if((input>='0')&&(input<='9'))
@@ -116,18 +116,50 @@ line level    source
  104   1        display_screen(input[2],2);
  105   1        display_screen(input[3],3);
  106   1      }
+ 107          
+ 108          // 用于让数码管动态显示一次数组，且指定其中的一个位数不亮
+ 109          // 该函数只是用于闪烁
+ 110          // 一次的显示时长约为40ms
+ 111          void blinked_display_str_once(unsigned char* input, unsigned char blinked_bit)
+ 112          {
+ 113   1        switch (blinked_bit)
+ 114   1        {
+ 115   2        case 1:
+ 116   2          display_screen(input[0],0);
+C51 COMPILER V9.54   LED                                                                   10/16/2024 01:15:44 PAGE 3   
+
+ 117   2          display_screen(input[1],1);
+ 118   2          display_screen(input[2],2);
+ 119   2          break;
+ 120   2        case 2:
+ 121   2          display_screen(input[0],0);
+ 122   2          display_screen(input[1],1);
+ 123   2          display_screen(input[3],3);
+ 124   2          break;
+ 125   2        case 3:
+ 126   2          display_screen(input[0],0);
+ 127   2          display_screen(input[2],2);
+ 128   2          display_screen(input[3],3);
+ 129   2          break;
+ 130   2        case 4:
+ 131   2          display_screen(input[1],1);
+ 132   2          display_screen(input[2],2);
+ 133   2          display_screen(input[3],3);
+ 134   2          break;
+ 135   2        default:
+ 136   2          break;
+ 137   2        }
+ 138   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    327    ----
+   CODE SIZE        =    521    ----
    CONSTANT SIZE    =     25    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       9
+   DATA SIZE        =   ----      12
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V9.54   LED                                                                   10/15/2024 20:50:49 PAGE 3   
-
 END OF MODULE INFORMATION.
 
 
