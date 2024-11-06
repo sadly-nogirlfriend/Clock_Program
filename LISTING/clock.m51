@@ -1,10 +1,10 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        10/16/2024  01:15:44  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        11/06/2024  15:11:47  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
 E:\KEIL_C51\C51\BIN\BL51.EXE ..\OUTPUT\service_fun.obj, ..\OUTPUT\interrupt.obj, ..\OUTPUT\key.obj, ..\OUTPUT\led.obj, .
->> .\OUTPUT\main.obj, ..\OUTPUT\timer.obj TO ..\OUTPUT\clock PRINT (..\LISTING\clock.m51) OVERLAY (?PR?CLOCK?SERVICE_FUN
->>  ~ ?PR?_NUM2STR?SERVICE_FUN)
+>> .\OUTPUT\main.obj, ..\OUTPUT\timer.obj, ..\OUTPUT\buzzer.obj TO ..\OUTPUT\clock PRINT (..\LISTING\clock.m51) OVERLAY 
+>> (?PR?CLOCK?SERVICE_FUN ~ ?PR?_NUM2STR?SERVICE_FUN)
 
 
 MEMORY MODEL: SMALL
@@ -17,6 +17,7 @@ INPUT MODULES INCLUDED:
   ..\OUTPUT\led.obj (LED)
   ..\OUTPUT\main.obj (MAIN)
   ..\OUTPUT\timer.obj (TIMER)
+  ..\OUTPUT\buzzer.obj (BUZZER)
   E:\KEIL_C51\C51\LIB\C51S.LIB (?C_STARTUP)
   E:\KEIL_C51\C51\LIB\C51S.LIB (?C?CLDPTR)
   E:\KEIL_C51\C51\LIB\C51S.LIB (?C?CLDOPTR)
@@ -58,10 +59,10 @@ LINK MAP OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
             CODE    09BFH     0084H     UNIT         ?PR?STOPWATCH?SERVICE_FUN
             CODE    0A43H     0074H     UNIT         ?PR?CLOCK?SERVICE_FUN
             CODE    0AB7H     0068H     UNIT         ?PR?KEY_FUCNTIONS?SERVICE_FUN
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 2
+
+
             CODE    0B1FH     0063H     UNIT         ?PR?_DISPLAY_STR?LED
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 2
-
-
             CODE    0B82H     0055H     UNIT         ?C_INITSEG
             CODE    0BD7H     0047H     UNIT         ?PR?BLINKED_DISPLAY_WINDOWS?SERVICE_FUN
             CODE    0C1EH     0040H     UNIT         ?PR?DISPLAY_WINDOWS?SERVICE_FUN
@@ -118,8 +119,8 @@ SEGMENT                                           DATA_GROUP
 ?C_C51STARTUP                                   -----    -----
   +--> ?PR?MAIN?MAIN
   +--> ?C_INITSEG
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 3
 
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 3
 
 
 ?PR?MAIN?MAIN                                   -----    -----
@@ -178,10 +179,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   B:00A8H.0       PUBLIC        EX0
   D:008DH         PUBLIC        TH1
   D:008AH         PUBLIC        TL0
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 4
+
+
   D:008BH         PUBLIC        TL1
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 4
-
-
   D:002EH         PUBLIC        min_time
   B:0088H.6       PUBLIC        TR1
   C:08B9H         PUBLIC        _num2str
@@ -238,10 +239,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:04C0H         LINE#         93
   C:04C0H         LINE#         94
   C:04C0H         LINE#         95
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 5
+
+
   C:04C0H         LINE#         96
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 5
-
-
   C:04C3H         LINE#         97
   C:04C3H         LINE#         98
   C:04D1H         LINE#         99
@@ -298,10 +299,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0588H         LINE#         151
   C:0588H         LINE#         152
   C:0588H         LINE#         153
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 6
+
+
   C:0593H         LINE#         154
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 6
-
-
   C:0593H         LINE#         155
   C:059BH         LINE#         156
   C:05A7H         LINE#         157
@@ -358,10 +359,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   -------         PROC          _NUM2STR
   D:0039H         SYMBOL        num
   D:003BH         SYMBOL        str
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 7
+
+
   C:08B9H         LINE#         219
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 7
-
-
   C:08C3H         LINE#         220
   C:08C3H         LINE#         221
   C:08D3H         LINE#         222
@@ -418,10 +419,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0AB7H         LINE#         270
   C:0AB7H         LINE#         271
   C:0AB9H         LINE#         272
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 8
+
+
   C:0ABDH         LINE#         274
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 8
-
-
   C:0AC6H         LINE#         275
   C:0AC6H         LINE#         276
   C:0AC8H         LINE#         277
@@ -478,10 +479,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:09DCH         LINE#         345
   C:09DEH         LINE#         347
   C:09E1H         LINE#         348
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 9
+
+
   C:09E4H         LINE#         349
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 9
-
-
   C:09ECH         LINE#         351
   C:09F2H         LINE#         352
   C:09F2H         LINE#         353
@@ -538,10 +539,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:00A1H         LINE#         414
   C:00A9H         LINE#         415
   C:00ACH         LINE#         416
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 10
+
+
   C:00ACH         LINE#         417
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 10
-
-
   C:00AEH         LINE#         418
   C:00B0H         LINE#         419
   C:00B0H         LINE#         420
@@ -598,10 +599,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:014FH         LINE#         472
   C:016BH         LINE#         473
   C:0178H         LINE#         474
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 11
+
+
   C:0178H         LINE#         476
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 11
-
-
   C:0185H         LINE#         477
   C:0185H         LINE#         478
   C:018EH         LINE#         479
@@ -658,10 +659,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:02C1H         LINE#         545
   C:02D4H         LINE#         546
   C:02D4H         LINE#         547
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 12
+
+
   C:02D4H         LINE#         548
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 12
-
-
   C:02E4H         LINE#         549
   C:02EEH         LINE#         553
   C:02EEH         LINE#         554
@@ -718,10 +719,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0D2DH         LINE#         23
   C:0D2FH         LINE#         24
   -------         ENDPROC       INTERRUPT_INIT
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 13
+
+
   -------         ENDMOD        INTERRUPT
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 13
-
-
 
   -------         MODULE        KEY
   C:0000H         SYMBOL        _ICE_DUMMY_
@@ -778,10 +779,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:084AH         LINE#         72
   C:084AH         LINE#         73
   C:084CH         LINE#         75
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 14
+
+
   C:084CH         LINE#         76
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 14
-
-
   C:084FH         LINE#         77
   C:084FH         LINE#         78
   C:0852H         LINE#         79
@@ -838,10 +839,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0689H         PUBLIC        _blinked_display_str_once
   C:0745H         SYMBOL        L?0052
   C:074BH         SYMBOL        L?0053
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 15
+
+
   -------         PROC          L?0051
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 15
-
-
   -------         ENDPROC       L?0051
   C:0745H         SYMBOL        L?0052
   C:074BH         SYMBOL        L?0053
@@ -898,10 +899,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0B59H         LINE#         93
   C:0B6BH         LINE#         94
   C:0B7DH         LINE#         95
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 16
+
+
   C:0B81H         LINE#         96
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 16
-
-
   -------         ENDPROC       _DISPLAY_STR
   -------         PROC          _DISPLAY_STR_ONCE
   D:003EH         SYMBOL        input
@@ -958,10 +959,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0C9AH         LINE#         13
   C:0C9DH         LINE#         14
   C:0CAAH         LINE#         15
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 17
+
+
   C:0CACH         LINE#         16
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 17
-
-
   C:0CAEH         LINE#         17
   C:0CB1H         LINE#         18
   C:0CB4H         LINE#         19
@@ -1018,10 +1019,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:000EH         LINE#         32
   C:0010H         LINE#         33
   C:001AH         LINE#         34
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 18
+
+
   -------         ENDPROC       SHORT_DELAY_5MS
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 18
-
-
   -------         PROC          _TIMER_LONG_DELAY_XMS
   D:0002H         SYMBOL        xms
   -------         DO            
@@ -1036,6 +1037,10 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0CE0H         LINE#         44
   -------         ENDPROC       _TIMER_LONG_DELAY_XMS
   -------         ENDMOD        TIMER
+
+  -------         MODULE        BUZZER
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  -------         ENDMOD        BUZZER
 
   -------         MODULE        ?C?CLDPTR
   C:05A8H         PUBLIC        ?C?CLDPTR
@@ -1074,13 +1079,13 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
     CALLER1: ?PR?CLOCK_FIXED?SERVICE_FUN
     CALLER2: ?C_C51STARTUP
 
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 19
+
+
 *** WARNING L15: MULTIPLE CALL TO SEGMENT
     SEGMENT: ?PR?_DISPLAY_STR_ONCE?LED
     CALLER1: ?PR?CLOCK_FIXED?SERVICE_FUN
     CALLER2: ?C_C51STARTUP
-
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/16/2024  01:15:44  PAGE 19
-
 
 Program Size: data=71.0 xdata=0 code=3391
 LINK/LOCATE RUN COMPLETE.  4 WARNING(S),  0 ERROR(S)
