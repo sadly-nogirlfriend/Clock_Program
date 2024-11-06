@@ -10,17 +10,20 @@ description : 存放了一些用于按键的功能函数
 #include "timer.h"
 
 // 定义按键的状态
-#define				KEY1_ON 			0x1   //0001
-#define				KEY2_ON 			0x2		//0010
-#define				KEY3_ON 			0x4   //0100
-#define				KEY4_ON 			0x8		//1000
+#define				KEY1_ON 			0x1 		//0000 0001
+#define				KEY2_ON 			0x2			//0000 0010
+#define				KEY3_ON 			0x4   		//0000 0100
+#define				KEY4_ON 			0x8			//0000 1000
+#define				KEY5_ON 			0x10		//0001 0000
+#define				KEY6_ON 			0x20		//0010 0000
 
 // 定义按键io口
 sbit key1 = P0^0;
 sbit key2 = P0^1;
 sbit key3 = P0^2;
 sbit key4 = P0^3;
-
+sbit key5 = P0^4;
+sbit key6 = P0^5;
 // 定义变量
 unsigned char key_state = 0x0;
 unsigned char mark = 0;
@@ -36,7 +39,7 @@ unsigned char Key_State_Scan(unsigned char model)
 	unsigned char key_state_1 = 0x0;
 	if(model == MODEL1)		//模式1，使用局部变量
 	{
-		if(!key1 || !key2 || !key3 || !key4)  // 检测是否有按键被按下
+		if(!key1 || !key2 || !key3 || !key4 || !key5 || !key6)  // 检测是否有按键被按下
 		{
 			if(mark == 0)
 			{
@@ -57,6 +60,14 @@ unsigned char Key_State_Scan(unsigned char model)
 				{
 					key_state_1 = key_state_1 + KEY4_ON;
 				}
+				if(!key5)
+				{
+					key_state_1 = key_state_1 + KEY5_ON;
+				}
+				if(!key6)
+				{
+					key_state_1 = key_state_1 + KEY6_ON;
+				}
 				mark = 1;
 			}
 		}
@@ -68,7 +79,7 @@ unsigned char Key_State_Scan(unsigned char model)
 	}
 	if(model == MODEL2)		//模式2，使用静态变量
 	{
-		if(!key1 || !key2 || !key3 || !key4)  // 检测是否有按键被按下
+		if(!key1 || !key2 || !key3 || !key4 || !key5 || !key6)  // 检测是否有按键被按下
 		{
 			if(mark == 0)
 			{
@@ -88,6 +99,14 @@ unsigned char Key_State_Scan(unsigned char model)
 				if(!key4)
 				{
 					key_state = key_state ^ (1 << 3);
+				}
+				if(!key5)
+				{
+					key_state = key_state ^ (1 << 4);
+				}
+				if(!key6)
+				{
+					key_state = key_state ^ (1 << 5);
 				}
 			}
 		}

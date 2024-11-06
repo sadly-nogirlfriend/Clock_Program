@@ -7,5 +7,6 @@ void clock();
 void key_fucntions();
 void stopwatch();
 void stopwatch_function();
+void clock_fixed();
 
 #endif

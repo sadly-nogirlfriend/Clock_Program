@@ -31,5 +31,6 @@
 void display_screen(unsigned char input,unsigned char signature);
 void display_str(unsigned char *input,unsigned int xms);
 void display_str_once(unsigned char *input);
+void blinked_display_str_once(unsigned char* input, unsigned char blinked_bit);
 	
 #endif
