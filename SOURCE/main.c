@@ -4,6 +4,7 @@
 #include "service_fun.h"
 #include "interrupt.h"
 #include "timer.h"
+#include "buzzer.h"
 
 sbit LED1 = P2^4;
 sbit LED2 = P2^5;
@@ -18,9 +19,10 @@ void main()
 	T0_Init();		// 用作时钟的T2定时器开始计时
 	while(1)
 	{
-		key_fucntions();
-		stopwatch_function();
-		display_windows();
+		// key_fucntions();
+		// stopwatch_function();
+		// display_windows();
+		buzzer_blinked(50);
 	}
 }
 

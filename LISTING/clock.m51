@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        11/06/2024  15:11:47  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        11/06/2024  16:06:51  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -38,8 +38,9 @@ LINK MAP OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
             DATA    0008H     002AH     UNIT         ?DT?SERVICE_FUN
             DATA    0032H     0012H     UNIT         _DATA_GROUP_
-            DATA    0044H     0002H     UNIT         ?DT?KEY
-            IDATA   0046H     0001H     UNIT         ?STACK
+            DATA    0044H     0005H     UNIT         ?DT?BUZZER
+            DATA    0049H     0002H     UNIT         ?DT?KEY
+            IDATA   004BH     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
@@ -58,23 +59,25 @@ LINK MAP OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
             CODE    0933H     008CH     UNIT         ?C_C51STARTUP
             CODE    09BFH     0084H     UNIT         ?PR?STOPWATCH?SERVICE_FUN
             CODE    0A43H     0074H     UNIT         ?PR?CLOCK?SERVICE_FUN
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 2
+
+
             CODE    0AB7H     0068H     UNIT         ?PR?KEY_FUCNTIONS?SERVICE_FUN
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 2
-
-
             CODE    0B1FH     0063H     UNIT         ?PR?_DISPLAY_STR?LED
-            CODE    0B82H     0055H     UNIT         ?C_INITSEG
-            CODE    0BD7H     0047H     UNIT         ?PR?BLINKED_DISPLAY_WINDOWS?SERVICE_FUN
-            CODE    0C1EH     0040H     UNIT         ?PR?DISPLAY_WINDOWS?SERVICE_FUN
-            CODE    0C5EH     003CH     UNIT         ?PR?_DISPLAY_STR_ONCE?LED
-            CODE    0C9AH     0025H     UNIT         ?PR?MAIN?MAIN
-            CODE    0CBFH     0022H     UNIT         ?PR?_TIMER_LONG_DELAY_XMS?TIMER
-            CODE    0CE1H     0019H     UNIT         ?CO?LED
-            CODE    0CFAH     0013H     UNIT         ?PR?T1_INIT?TIMER
-            CODE    0D0DH     0012H     UNIT         ?PR?T0_INIT?TIMER
-            CODE    0D1FH     0011H     UNIT         ?PR?INTERRUPT_INIT?INTERRUPT
-            CODE    0D30H     000AH     UNIT         ?PR?STOPWATCH_FUNCTION?SERVICE_FUN
-            CODE    0D3AH     0005H     UNIT         ?CO?MAIN
+            CODE    0B82H     0060H     UNIT         ?C_INITSEG
+            CODE    0BE2H     0047H     UNIT         ?PR?BLINKED_DISPLAY_WINDOWS?SERVICE_FUN
+            CODE    0C29H     0040H     UNIT         ?PR?DISPLAY_WINDOWS?SERVICE_FUN
+            CODE    0C69H     003CH     UNIT         ?PR?_DISPLAY_STR_ONCE?LED
+            CODE    0CA5H     0023H     UNIT         ?PR?MAIN?MAIN
+            CODE    0CC8H     0022H     UNIT         ?PR?_TIMER_LONG_DELAY_XMS?TIMER
+            CODE    0CEAH     0020H     UNIT         ?PR?_BUZZER_BLINKED?BUZZER
+            CODE    0D0AH     0019H     UNIT         ?CO?LED
+            CODE    0D23H     0018H     UNIT         ?PR?_BUZZER_BEEP?BUZZER
+            CODE    0D3BH     0013H     UNIT         ?PR?T1_INIT?TIMER
+            CODE    0D4EH     0012H     UNIT         ?PR?T0_INIT?TIMER
+            CODE    0D60H     0011H     UNIT         ?PR?INTERRUPT_INIT?INTERRUPT
+            CODE    0D71H     000AH     UNIT         ?PR?STOPWATCH_FUNCTION?SERVICE_FUN
+            CODE    0D7BH     0005H     UNIT         ?CO?MAIN
 
 
 
@@ -101,7 +104,7 @@ SEGMENT                                           DATA_GROUP
   +--> ?PR?_DISPLAY_STR_ONCE?LED
   +--> ?PR?_BLINKED_DISPLAY_STR_ONCE?LED
 
-?PR?_DISPLAY_STR_ONCE?LED                       003EH    0003H
+?PR?_DISPLAY_STR_ONCE?LED                       0039H    0003H
   +--> ?PR?_DISPLAY_SCREEN?LED
 
 ?PR?_DISPLAY_SCREEN?LED                         -----    -----
@@ -111,17 +114,17 @@ SEGMENT                                           DATA_GROUP
 ?PR?_BLINKED_DISPLAY_STR_ONCE?LED               0039H    0003H
   +--> ?PR?_DISPLAY_SCREEN?LED
 
-?PR?_KEY_STATE_SCAN?KEY                         003EH    0002H
+?PR?_KEY_STATE_SCAN?KEY                         0039H    0002H
   +--> ?PR?SHORT_DELAY_5MS?TIMER
 
 *** NEW ROOT ***************************************************
 
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 3
+
+
 ?C_C51STARTUP                                   -----    -----
   +--> ?PR?MAIN?MAIN
   +--> ?C_INITSEG
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 3
-
-
 
 ?PR?MAIN?MAIN                                   -----    -----
   +--> ?PR?INTERRUPT_INIT?INTERRUPT
@@ -129,19 +132,13 @@ SEGMENT                                           DATA_GROUP
   +--> ?PR?_DISPLAY_STR?LED
   +--> ?PR?T1_INIT?TIMER
   +--> ?PR?T0_INIT?TIMER
-  +--> ?PR?KEY_FUCNTIONS?SERVICE_FUN
-  +--> ?PR?STOPWATCH_FUNCTION?SERVICE_FUN
-  +--> ?PR?DISPLAY_WINDOWS?SERVICE_FUN
+  +--> ?PR?_BUZZER_BLINKED?BUZZER
 
 ?PR?_DISPLAY_STR?LED                            003EH    0006H
   +--> ?PR?_DISPLAY_SCREEN?LED
 
-?PR?KEY_FUCNTIONS?SERVICE_FUN                   -----    -----
-  +--> ?PR?_KEY_STATE_SCAN?KEY
-
-?PR?DISPLAY_WINDOWS?SERVICE_FUN                 -----    -----
-  +--> ?CO?SERVICE_FUN
-  +--> ?PR?_DISPLAY_STR_ONCE?LED
+?PR?_BUZZER_BLINKED?BUZZER                      -----    -----
+  +--> ?PR?_BUZZER_BEEP?BUZZER
 
 
 
@@ -166,8 +163,8 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   D:0022H         PUBLIC        mounth
   D:0024H         PUBLIC        Mod
   D:0025H         PUBLIC        blinked_screen_State
-  C:0BD7H         PUBLIC        blinked_display_windows
-  C:0D30H         PUBLIC        stopwatch_function
+  C:0BE2H         PUBLIC        blinked_display_windows
+  C:0D71H         PUBLIC        stopwatch_function
   D:0026H         PUBLIC        year
   D:0028H         PUBLIC        hours
   C:03AAH         PUBLIC        time_carry
@@ -179,17 +176,17 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   B:00A8H.0       PUBLIC        EX0
   D:008DH         PUBLIC        TH1
   D:008AH         PUBLIC        TL0
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 4
-
-
   D:008BH         PUBLIC        TL1
   D:002EH         PUBLIC        min_time
   B:0088H.6       PUBLIC        TR1
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 4
+
+
   C:08B9H         PUBLIC        _num2str
   C:09BFH         PUBLIC        stopwatch
   D:0030H         PUBLIC        stopwatch_state
   D:0031H         PUBLIC        blinked_mark
-  C:0C1EH         PUBLIC        display_windows
+  C:0C29H         PUBLIC        display_windows
   -------         PROC          TIME_CARRY
   C:03AAH         LINE#         47
   C:03AAH         LINE#         48
@@ -239,12 +236,12 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:04C0H         LINE#         93
   C:04C0H         LINE#         94
   C:04C0H         LINE#         95
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 5
-
-
   C:04C0H         LINE#         96
   C:04C3H         LINE#         97
   C:04C3H         LINE#         98
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 5
+
+
   C:04D1H         LINE#         99
   C:04D1H         LINE#         100
   C:04D9H         LINE#         101
@@ -299,12 +296,12 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0588H         LINE#         151
   C:0588H         LINE#         152
   C:0588H         LINE#         153
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 6
-
-
   C:0593H         LINE#         154
   C:0593H         LINE#         155
   C:059BH         LINE#         156
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 6
+
+
   C:05A7H         LINE#         157
   C:05A7H         LINE#         158
   C:05A7H         LINE#         159
@@ -314,43 +311,43 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:05A7H         LINE#         163
   -------         ENDPROC       TIME_CARRY
   -------         PROC          BLINKED_DISPLAY_WINDOWS
-  C:0BD7H         LINE#         168
-  C:0BD7H         LINE#         169
-  C:0BD7H         LINE#         171
-  C:0BD9H         LINE#         172
-  C:0BDEH         LINE#         173
-  C:0BDEH         LINE#         174
-  C:0BE1H         LINE#         175
-  C:0BE4H         LINE#         176
-  C:0BE4H         LINE#         179
-  C:0BF1H         LINE#         180
-  C:0BF1H         LINE#         181
-  C:0BF1H         LINE#         182
-  C:0BFBH         LINE#         183
-  C:0BFBH         LINE#         184
-  C:0BFBH         LINE#         185
-  C:0BFDH         LINE#         191
-  C:0BFDH         LINE#         192
-  C:0C07H         LINE#         193
-  C:0C07H         LINE#         194
-  C:0C07H         LINE#         195
-  C:0C09H         LINE#         197
-  C:0C09H         LINE#         198
-  C:0C09H         LINE#         199
-  C:0C09H         LINE#         200
-  C:0C0BH         LINE#         201
-  C:0C0BH         LINE#         202
-  C:0C15H         LINE#         203
-  C:0C15H         LINE#         204
-  C:0C18H         LINE#         205
-  C:0C18H         LINE#         207
-  C:0C18H         LINE#         208
-  C:0C1DH         LINE#         209
-  C:0C1DH         LINE#         210
-  C:0C1DH         LINE#         212
-  C:0C1DH         LINE#         213
-  C:0C1DH         LINE#         214
-  C:0C1DH         LINE#         215
+  C:0BE2H         LINE#         168
+  C:0BE2H         LINE#         169
+  C:0BE2H         LINE#         171
+  C:0BE4H         LINE#         172
+  C:0BE9H         LINE#         173
+  C:0BE9H         LINE#         174
+  C:0BECH         LINE#         175
+  C:0BEFH         LINE#         176
+  C:0BEFH         LINE#         179
+  C:0BFCH         LINE#         180
+  C:0BFCH         LINE#         181
+  C:0BFCH         LINE#         182
+  C:0C06H         LINE#         183
+  C:0C06H         LINE#         184
+  C:0C06H         LINE#         185
+  C:0C08H         LINE#         191
+  C:0C08H         LINE#         192
+  C:0C12H         LINE#         193
+  C:0C12H         LINE#         194
+  C:0C12H         LINE#         195
+  C:0C14H         LINE#         197
+  C:0C14H         LINE#         198
+  C:0C14H         LINE#         199
+  C:0C14H         LINE#         200
+  C:0C16H         LINE#         201
+  C:0C16H         LINE#         202
+  C:0C20H         LINE#         203
+  C:0C20H         LINE#         204
+  C:0C23H         LINE#         205
+  C:0C23H         LINE#         207
+  C:0C23H         LINE#         208
+  C:0C28H         LINE#         209
+  C:0C28H         LINE#         210
+  C:0C28H         LINE#         212
+  C:0C28H         LINE#         213
+  C:0C28H         LINE#         214
+  C:0C28H         LINE#         215
   -------         ENDPROC       BLINKED_DISPLAY_WINDOWS
   C:089DH         SYMBOL        L?0252
   -------         PROC          L?0251
@@ -359,57 +356,57 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   -------         PROC          _NUM2STR
   D:0039H         SYMBOL        num
   D:003BH         SYMBOL        str
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 7
-
-
   C:08B9H         LINE#         219
   C:08C3H         LINE#         220
   C:08C3H         LINE#         221
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 7
+
+
   C:08D3H         LINE#         222
   C:08F4H         LINE#         223
   C:0915H         LINE#         224
   -------         ENDPROC       _NUM2STR
   -------         PROC          DISPLAY_WINDOWS
-  C:0C1EH         LINE#         228
-  C:0C1EH         LINE#         229
-  C:0C1EH         LINE#         230
-  C:0C27H         LINE#         231
-  C:0C27H         LINE#         232
-  C:0C27H         LINE#         233
-  C:0C34H         LINE#         234
-  C:0C34H         LINE#         235
-  C:0C34H         LINE#         236
-  C:0C3AH         LINE#         237
-  C:0C3CH         LINE#         238
-  C:0C3CH         LINE#         239
-  C:0C42H         LINE#         240
-  C:0C44H         LINE#         241
-  C:0C44H         LINE#         242
-  C:0C4AH         LINE#         243
-  C:0C4CH         LINE#         244
-  C:0C4CH         LINE#         245
-  C:0C52H         LINE#         246
-  C:0C54H         LINE#         247
-  C:0C54H         LINE#         248
-  C:0C54H         LINE#         249
-  C:0C54H         LINE#         250
-  C:0C5DH         LINE#         251
-  C:0C5DH         LINE#         252
-  C:0C5DH         LINE#         253
-  C:0C5DH         LINE#         254
-  C:0C5DH         LINE#         255
+  C:0C29H         LINE#         228
+  C:0C29H         LINE#         229
+  C:0C29H         LINE#         230
+  C:0C32H         LINE#         231
+  C:0C32H         LINE#         232
+  C:0C32H         LINE#         233
+  C:0C3FH         LINE#         234
+  C:0C3FH         LINE#         235
+  C:0C3FH         LINE#         236
+  C:0C45H         LINE#         237
+  C:0C47H         LINE#         238
+  C:0C47H         LINE#         239
+  C:0C4DH         LINE#         240
+  C:0C4FH         LINE#         241
+  C:0C4FH         LINE#         242
+  C:0C55H         LINE#         243
+  C:0C57H         LINE#         244
+  C:0C57H         LINE#         245
+  C:0C5DH         LINE#         246
+  C:0C5FH         LINE#         247
+  C:0C5FH         LINE#         248
+  C:0C5FH         LINE#         249
+  C:0C5FH         LINE#         250
+  C:0C68H         LINE#         251
+  C:0C68H         LINE#         252
+  C:0C68H         LINE#         253
+  C:0C68H         LINE#         254
+  C:0C68H         LINE#         255
   -------         ENDPROC       DISPLAY_WINDOWS
   -------         PROC          STOPWATCH_FUNCTION
-  C:0D30H         LINE#         257
-  C:0D30H         LINE#         258
-  C:0D30H         LINE#         259
-  C:0D34H         LINE#         260
-  C:0D34H         LINE#         261
-  C:0D36H         LINE#         262
-  C:0D37H         LINE#         264
-  C:0D37H         LINE#         265
-  C:0D39H         LINE#         266
-  C:0D39H         LINE#         267
+  C:0D71H         LINE#         257
+  C:0D71H         LINE#         258
+  C:0D71H         LINE#         259
+  C:0D75H         LINE#         260
+  C:0D75H         LINE#         261
+  C:0D77H         LINE#         262
+  C:0D78H         LINE#         264
+  C:0D78H         LINE#         265
+  C:0D7AH         LINE#         266
+  C:0D7AH         LINE#         267
   -------         ENDPROC       STOPWATCH_FUNCTION
   -------         PROC          KEY_FUCNTIONS
   -------         DO            
@@ -419,12 +416,12 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0AB7H         LINE#         270
   C:0AB7H         LINE#         271
   C:0AB9H         LINE#         272
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 8
-
-
   C:0ABDH         LINE#         274
   C:0AC6H         LINE#         275
   C:0AC6H         LINE#         276
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 8
+
+
   C:0AC8H         LINE#         277
   C:0ACDH         LINE#         278
   C:0ACDH         LINE#         279
@@ -479,12 +476,12 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:09DCH         LINE#         345
   C:09DEH         LINE#         347
   C:09E1H         LINE#         348
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 9
-
-
   C:09E4H         LINE#         349
   C:09ECH         LINE#         351
   C:09F2H         LINE#         352
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 9
+
+
   C:09F2H         LINE#         353
   C:09FAH         LINE#         354
   C:0A00H         LINE#         355
@@ -539,12 +536,12 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:00A1H         LINE#         414
   C:00A9H         LINE#         415
   C:00ACH         LINE#         416
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 10
-
-
   C:00ACH         LINE#         417
   C:00AEH         LINE#         418
   C:00B0H         LINE#         419
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 10
+
+
   C:00B0H         LINE#         420
   C:00B7H         LINE#         421
   C:00B9H         LINE#         422
@@ -599,12 +596,12 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:014FH         LINE#         472
   C:016BH         LINE#         473
   C:0178H         LINE#         474
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 11
-
-
   C:0178H         LINE#         476
   C:0185H         LINE#         477
   C:0185H         LINE#         478
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 11
+
+
   C:018EH         LINE#         479
   C:018EH         LINE#         480
   C:01A1H         LINE#         481
@@ -659,12 +656,12 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:02C1H         LINE#         545
   C:02D4H         LINE#         546
   C:02D4H         LINE#         547
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 12
-
-
   C:02D4H         LINE#         548
   C:02E4H         LINE#         549
   C:02EEH         LINE#         553
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 12
+
+
   C:02EEH         LINE#         554
   C:02FEH         LINE#         555
   C:030CH         LINE#         557
@@ -705,41 +702,41 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   B:00B8H.1       PUBLIC        PT0
   B:00B8H.3       PUBLIC        PT1
   B:00B8H.0       PUBLIC        PX0
-  C:0D1FH         PUBLIC        Interrupt_init
+  C:0D60H         PUBLIC        Interrupt_init
   -------         PROC          INTERRUPT_INIT
-  C:0D1FH         LINE#         7
-  C:0D1FH         LINE#         8
-  C:0D1FH         LINE#         13
-  C:0D21H         LINE#         15
-  C:0D23H         LINE#         16
-  C:0D25H         LINE#         17
-  C:0D27H         LINE#         19
-  C:0D29H         LINE#         20
-  C:0D2BH         LINE#         22
-  C:0D2DH         LINE#         23
-  C:0D2FH         LINE#         24
+  C:0D60H         LINE#         7
+  C:0D60H         LINE#         8
+  C:0D60H         LINE#         13
+  C:0D62H         LINE#         15
+  C:0D64H         LINE#         16
+  C:0D66H         LINE#         17
+  C:0D68H         LINE#         19
+  C:0D6AH         LINE#         20
+  C:0D6CH         LINE#         22
+  C:0D6EH         LINE#         23
+  C:0D70H         LINE#         24
   -------         ENDPROC       INTERRUPT_INIT
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 13
-
-
   -------         ENDMOD        INTERRUPT
 
   -------         MODULE        KEY
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 13
+
+
   C:0000H         SYMBOL        _ICE_DUMMY_
   B:0080H.3       PUBLIC        key4
   B:0080H.4       PUBLIC        key5
   D:0080H         PUBLIC        P0
   B:0080H.5       PUBLIC        key6
-  D:0044H         PUBLIC        mark
-  D:0045H         PUBLIC        key_state
+  D:0049H         PUBLIC        mark
+  D:004AH         PUBLIC        key_state
   C:07F3H         PUBLIC        _Key_State_Scan
   B:0080H.0       PUBLIC        key1
   B:0080H.1       PUBLIC        key2
   B:0080H.2       PUBLIC        key3
   -------         PROC          _KEY_STATE_SCAN
-  D:003EH         SYMBOL        model
+  D:0039H         SYMBOL        model
   -------         DO            
-  D:003FH         SYMBOL        key_state_1
+  D:003AH         SYMBOL        key_state_1
   -------         ENDDO         
   C:07F3H         LINE#         37
   C:07F5H         LINE#         38
@@ -779,12 +776,12 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:084AH         LINE#         72
   C:084AH         LINE#         73
   C:084CH         LINE#         75
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 14
-
-
   C:084CH         LINE#         76
   C:084FH         LINE#         77
   C:084FH         LINE#         78
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 14
+
+
   C:0852H         LINE#         79
   C:0852H         LINE#         80
   C:0858H         LINE#         81
@@ -833,18 +830,18 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   C:0B1FH         PUBLIC        _display_str
-  C:0C5EH         PUBLIC        _display_str_once
-  C:0CE1H         PUBLIC        leddata
+  C:0C69H         PUBLIC        _display_str_once
+  C:0D0AH         PUBLIC        leddata
   C:0754H         PUBLIC        _display_screen
   C:0689H         PUBLIC        _blinked_display_str_once
   C:0745H         SYMBOL        L?0052
   C:074BH         SYMBOL        L?0053
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 15
-
-
   -------         PROC          L?0051
   -------         ENDPROC       L?0051
   C:0745H         SYMBOL        L?0052
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 15
+
+
   C:074BH         SYMBOL        L?0053
   -------         PROC          _DISPLAY_SCREEN
   D:0007H         SYMBOL        input
@@ -899,19 +896,19 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:0B59H         LINE#         93
   C:0B6BH         LINE#         94
   C:0B7DH         LINE#         95
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 16
-
-
   C:0B81H         LINE#         96
   -------         ENDPROC       _DISPLAY_STR
   -------         PROC          _DISPLAY_STR_ONCE
-  D:003EH         SYMBOL        input
-  C:0C5EH         LINE#         99
-  C:0C64H         LINE#         100
-  C:0C64H         LINE#         102
-  C:0C6DH         LINE#         103
-  C:0C76H         LINE#         104
-  C:0C88H         LINE#         105
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 16
+
+
+  D:0039H         SYMBOL        input
+  C:0C69H         LINE#         99
+  C:0C6FH         LINE#         100
+  C:0C6FH         LINE#         102
+  C:0C78H         LINE#         103
+  C:0C81H         LINE#         104
+  C:0C93H         LINE#         105
   -------         ENDPROC       _DISPLAY_STR_ONCE
   -------         PROC          _BLINKED_DISPLAY_STR_ONCE
   D:0039H         SYMBOL        input
@@ -952,32 +949,30 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   D:00A0H         PUBLIC        P2
   B:00A0H.4       PUBLIC        LED1
   B:00A0H.5       PUBLIC        LED2
-  C:0C9AH         PUBLIC        main
+  C:0CA5H         PUBLIC        main
   -------         PROC          MAIN
-  C:0C9AH         LINE#         11
-  C:0C9AH         LINE#         12
-  C:0C9AH         LINE#         13
-  C:0C9DH         LINE#         14
-  C:0CAAH         LINE#         15
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 17
+  C:0CA5H         LINE#         12
+  C:0CA5H         LINE#         13
+  C:0CA5H         LINE#         14
+  C:0CA8H         LINE#         15
+  C:0CB5H         LINE#         16
+  C:0CB7H         LINE#         17
+  C:0CB9H         LINE#         18
+  C:0CBCH         LINE#         19
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 17
 
 
-  C:0CACH         LINE#         16
-  C:0CAEH         LINE#         17
-  C:0CB1H         LINE#         18
-  C:0CB4H         LINE#         19
-  C:0CB4H         LINE#         20
-  C:0CB4H         LINE#         21
-  C:0CB7H         LINE#         22
-  C:0CBAH         LINE#         23
-  C:0CBDH         LINE#         24
+  C:0CBFH         LINE#         20
+  C:0CBFH         LINE#         21
+  C:0CBFH         LINE#         25
+  C:0CC6H         LINE#         26
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
 
   -------         MODULE        TIMER
   C:0000H         SYMBOL        _ICE_DUMMY_
   C:000EH         PUBLIC        short_delay_5ms
-  C:0CBFH         PUBLIC        _Timer_long_delay_Xms
+  C:0CC8H         PUBLIC        _Timer_long_delay_Xms
   D:0089H         PUBLIC        TMOD
   B:0088H.5       PUBLIC        TF0
   B:0088H.7       PUBLIC        TF1
@@ -987,27 +982,27 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   D:008BH         PUBLIC        TL1
   B:0088H.4       PUBLIC        TR0
   B:0088H.6       PUBLIC        TR1
-  C:0D0DH         PUBLIC        T0_Init
-  C:0CFAH         PUBLIC        T1_Init
+  C:0D4EH         PUBLIC        T0_Init
+  C:0D3BH         PUBLIC        T1_Init
   -------         PROC          T0_INIT
-  C:0D0DH         LINE#         4
-  C:0D0DH         LINE#         5
-  C:0D0DH         LINE#         6
-  C:0D14H         LINE#         7
-  C:0D16H         LINE#         9
-  C:0D18H         LINE#         11
-  C:0D1BH         LINE#         12
-  C:0D1EH         LINE#         13
+  C:0D4EH         LINE#         4
+  C:0D4EH         LINE#         5
+  C:0D4EH         LINE#         6
+  C:0D55H         LINE#         7
+  C:0D57H         LINE#         9
+  C:0D59H         LINE#         11
+  C:0D5CH         LINE#         12
+  C:0D5FH         LINE#         13
   -------         ENDPROC       T0_INIT
   -------         PROC          T1_INIT
-  C:0CFAH         LINE#         18
-  C:0CFAH         LINE#         19
-  C:0CFAH         LINE#         20
-  C:0D02H         LINE#         21
-  C:0D04H         LINE#         23
-  C:0D06H         LINE#         25
-  C:0D09H         LINE#         26
-  C:0D0CH         LINE#         27
+  C:0D3BH         LINE#         18
+  C:0D3BH         LINE#         19
+  C:0D3BH         LINE#         20
+  C:0D43H         LINE#         21
+  C:0D45H         LINE#         23
+  C:0D47H         LINE#         25
+  C:0D4AH         LINE#         26
+  C:0D4DH         LINE#         27
   -------         ENDPROC       T1_INIT
   -------         PROC          SHORT_DELAY_5MS
   -------         DO            
@@ -1019,27 +1014,62 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   C:000EH         LINE#         32
   C:0010H         LINE#         33
   C:001AH         LINE#         34
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 18
-
-
   -------         ENDPROC       SHORT_DELAY_5MS
   -------         PROC          _TIMER_LONG_DELAY_XMS
   D:0002H         SYMBOL        xms
   -------         DO            
   D:0082H         SYMBOL        i
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 18
+
+
   -------         ENDDO         
-  C:0CBFH         LINE#         37
-  C:0CC3H         LINE#         38
-  C:0CC3H         LINE#         40
-  C:0CDAH         LINE#         41
-  C:0CDAH         LINE#         42
-  C:0CDDH         LINE#         43
-  C:0CE0H         LINE#         44
+  C:0CC8H         LINE#         37
+  C:0CCCH         LINE#         38
+  C:0CCCH         LINE#         40
+  C:0CE3H         LINE#         41
+  C:0CE3H         LINE#         42
+  C:0CE6H         LINE#         43
+  C:0CE9H         LINE#         44
   -------         ENDPROC       _TIMER_LONG_DELAY_XMS
   -------         ENDMOD        TIMER
 
   -------         MODULE        BUZZER
   C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  B:00A0H.6       PUBLIC        Buzzer_Port
+  D:0044H         PUBLIC        button
+  C:0D23H         PUBLIC        _buzzer_beep
+  D:0045H         PUBLIC        count
+  C:0CEAH         PUBLIC        _buzzer_blinked
+  D:0047H         PUBLIC        blinked_count
+  -------         PROC          _BUZZER_BEEP
+  D:0006H         SYMBOL        hz
+  C:0D23H         LINE#         10
+  C:0D23H         LINE#         11
+  C:0D23H         LINE#         12
+  C:0D2BH         LINE#         13
+  C:0D33H         LINE#         14
+  C:0D33H         LINE#         16
+  C:0D35H         LINE#         17
+  C:0D3AH         LINE#         18
+  C:0D3AH         LINE#         19
+  -------         ENDPROC       _BUZZER_BEEP
+  -------         PROC          _BUZZER_BLINKED
+  D:0006H         SYMBOL        hz
+  C:0CEAH         LINE#         21
+  C:0CEAH         LINE#         22
+  C:0CEAH         LINE#         23
+  C:0CF2H         LINE#         24
+  C:0CFAH         LINE#         25
+  C:0CFAH         LINE#         26
+  C:0CFDH         LINE#         27
+  C:0D02H         LINE#         28
+  C:0D02H         LINE#         29
+  C:0D06H         LINE#         30
+  C:0D06H         LINE#         31
+  C:0D09H         LINE#         32
+  C:0D09H         LINE#         33
+  -------         ENDPROC       _BUZZER_BLINKED
   -------         ENDMOD        BUZZER
 
   -------         MODULE        ?C?CLDPTR
@@ -1049,6 +1079,9 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   -------         MODULE        ?C?CLDOPTR
   C:05C1H         PUBLIC        ?C?CLDOPTR
   -------         ENDMOD        ?C?CLDOPTR
+BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  16:06:51  PAGE 19
+
+
 
   -------         MODULE        ?C?CSTPTR
   C:05EEH         PUBLIC        ?C?CSTPTR
@@ -1067,6 +1100,15 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
   -------         ENDMOD        ?C?UIDIV
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?DISPLAY_WINDOWS?SERVICE_FUN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?STOPWATCH_FUNCTION?SERVICE_FUN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?KEY_FUCNTIONS?SERVICE_FUN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_TIMER_LONG_DELAY_XMS?TIMER
 
 *** WARNING L15: MULTIPLE CALL TO SEGMENT
@@ -1074,18 +1116,5 @@ SYMBOL TABLE OF MODULE:  ..\OUTPUT\clock (SERVICE_FUN)
     CALLER1: ?PR?STOPWATCH?SERVICE_FUN
     CALLER2: ?PR?CLOCK_FIXED?SERVICE_FUN
 
-*** WARNING L15: MULTIPLE CALL TO SEGMENT
-    SEGMENT: ?PR?_KEY_STATE_SCAN?KEY
-    CALLER1: ?PR?CLOCK_FIXED?SERVICE_FUN
-    CALLER2: ?C_C51STARTUP
-
-BL51 BANKED LINKER/LOCATER V6.22                                                      11/06/2024  15:11:47  PAGE 19
-
-
-*** WARNING L15: MULTIPLE CALL TO SEGMENT
-    SEGMENT: ?PR?_DISPLAY_STR_ONCE?LED
-    CALLER1: ?PR?CLOCK_FIXED?SERVICE_FUN
-    CALLER2: ?C_C51STARTUP
-
-Program Size: data=71.0 xdata=0 code=3391
-LINK/LOCATE RUN COMPLETE.  4 WARNING(S),  0 ERROR(S)
+Program Size: data=76.0 xdata=0 code=3456
+LINK/LOCATE RUN COMPLETE.  5 WARNING(S),  0 ERROR(S)
