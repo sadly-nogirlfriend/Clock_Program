@@ -6,4 +6,4 @@
 "..\OUTPUT\timer.obj",
 "..\OUTPUT\buzzer.obj" 
 TO "..\OUTPUT\clock" 
-PRINT("..\LISTING\clock.m51") OVERLAY( ?PR?CLOCK?SERVICE_FUN~?PR?_NUM2STR?SERVICE_FUN )
+PRINT("..\LISTING\clock.m51") OVERLAY( ?PR?_NUM2STR?SERVICE_FUN ! * )

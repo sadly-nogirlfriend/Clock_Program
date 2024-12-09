@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 1   
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE SERVICE_FUN
@@ -19,610 +19,773 @@ line level    source
    9          #include <reg51.h>
   10          #include "key.h"
   11          #include "led.h"
-  12          
-  13          // 宏定义
-  14          #define       WINDOW1       2       // 分秒窗口
-  15          #define       WINDOW2       3       // 月日窗口
-  16          #define       WINDOW3       4       // 年份窗口
-  17          #define       STOPWATCH_WINDOW  5       // 秒表窗口
-  18          #define       CLOCK_MOD     6
-  19          #define       STOPWATCH_MOD   7
-  20          #define             ADD                 8
-  21          #define             MINUS               9
-  22          
-  23          // 时间变量区
-  24          unsigned int mins = 21;
-  25          unsigned int hours = 11;
-  26          unsigned int day = 14;
-  27          unsigned int mounth = 10;
-  28          unsigned int year = 2024;
-  29          int min_time = 0; 
-  30          unsigned int stopwatch_sec = 0;  // 秒表计数
-  31          unsigned int stopwatch_10ms = 0;
-  32          
-  33          unsigned char window1_num[] = "0000";  // 用于计数，窗口1
-  34          unsigned char window2_num[] = "0000";  // 用于计数，窗口2
-  35          unsigned char window3_num[] = "0000";  // 用于计数，窗口3
-  36          unsigned char stopwatch_window_num[] = "0000";  // 用于计数，秒表窗口
-  37          
-  38          // 标记变量区
-  39          unsigned char windows = WINDOW1;            // 窗口标记，默认为窗口1
-  40          unsigned char Mod = CLOCK_MOD;              // 模式标记，默认为时钟模式
-  41          unsigned char stopwatch_state = 0;          // 秒表开关标记
-  42          unsigned char blinked_bit = 1;              // 屏幕闪烁位数标记
-  43          unsigned char blinked_mark = 0;             // 屏幕闪烁定时标记
-  44          unsigned char blinked_screen_State = ~0;    // 屏幕闪烁状态标记
-  45          
-  46          // 该函数用于日历的进位计算
-  47          void time_carry()
-  48          {
-  49   1        if(min_time == 1000)
-  50   1        {
-  51   2          mins++;
-  52   2          min_time = 0;
-  53   2        }
-  54   1        if(mins >= 60)   //60分钟进1小时
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 2   
+  12          #include "buzzer.h"
+  13          
+  14          // 宏定义
+  15          #define       WINDOW1             2       // 分秒窗口
+  16          #define       WINDOW2             3       // 月日窗口
+  17          #define       WINDOW3             4       // 年份窗口
+  18          #define       STOPWATCH_WINDOW    5       // 秒表窗口
+  19          #define       CLOCK_MOD           6
+  20          #define       STOPWATCH_MOD       7
+  21          #define       ALARM_SET_MOD       8
+  22          #define       CLOCK_FIXED_MOD     9
+  23          
+  24          #define   LED_ON    0
+  25          #define   LED_OFF   1
+  26          
+  27          sbit LED1 = P2^4;
+  28          sbit LED2 = P2^5;
+  29          
+  30          // 时间变量区
+  31          unsigned int mins = 34;
+  32          unsigned int hours = 12;
+  33          unsigned int day = 7;
+  34          unsigned int mounth = 11;
+  35          unsigned int year = 2024;
+  36          int min_time = 0; 
+  37          unsigned int stopwatch_sec = 0;  // 秒表计数
+  38          unsigned int stopwatch_10ms = 0; // 秒表计毫秒
+  39          unsigned int alarm_mins = 35;     // 闹钟分
+  40          unsigned int alarm_hours = 12;    // 闹钟秒
+  41          
+  42          // 窗口字符变量区
+  43          unsigned char window1_num[] = "0000";  // 用于计数，窗口1
+  44          unsigned char window2_num[] = "0000";  // 用于计数，窗口2
+  45          unsigned char window3_num[] = "0000";  // 用于计数，窗口3
+  46          unsigned char stopwatch_window_num[] = "0000";  // 用于计数，秒表窗口
+  47          unsigned char alarm_clock_window_num[] = "1235";
+  48          
+  49          // 标记变量区
+  50          unsigned char windows = WINDOW1;            // 窗口标记，默认为窗口1
+  51          unsigned char Mod = CLOCK_MOD;              // 模式标记，默认为时钟模式
+  52          unsigned char stopwatch_state = 0;          // 秒表开关标记
+  53          unsigned char blinked_bit = 1;              // 屏幕闪烁位数标记
+  54          unsigned char alarm_set_bit = 1;            // 闹钟修正闪烁位数标记
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 2   
 
-  55   1        {
-  56   2          hours++;
-  57   2          mins = mins-60;
-  58   2        }
-  59   1        if(hours >= 24)  //24小时进1天
-  60   1        {
-  61   2          day++;
-  62   2          hours = hours - 24;
-  63   2        }
-  64   1          if(year >= 10000) //不超过一万年
-  65   1          {
-  66   2              year = year - 10000;
-  67   2          }
-  68   1        if(mounth > 12)
-  69   1          {
-  70   2              mounth = 1;
-  71   2          }
-  72   1          // 日进位
-  73   1          if((year%4 == 0)&&(year%100 != 0)||(year%400 == 0))   // 闰年
-  74   1          {
-  75   2              switch (mounth)
-  76   2              {
-  77   3              case 1:
-  78   3              case 3:
-  79   3              case 5:
-  80   3              case 7:
-  81   3              case 8:
-  82   3              case 10:
-  83   3              if(day > 31)
-  84   3                  {
-  85   4                      mounth++;
-  86   4                      day = day-31;
-  87   4                  }
-  88   3                  break;
-  89   3              case 12:
-  90   3                  if(day > 31)
-  91   3                  {
-  92   4                      year++;
-  93   4                      mounth = 1;
-  94   4                      day = day - 31;
-  95   4                  }
-  96   3                  break;
-  97   3              case 2:
-  98   3                  if(day > 29)
-  99   3                  {
- 100   4                      mounth++;
- 101   4                      day = day - 29;
- 102   4                  }
- 103   3                  break;
- 104   3              case 4:
- 105   3              case 6:
- 106   3              case 9:
- 107   3              case 11:
- 108   3                  if(day > 30)
- 109   3                  {
- 110   4                      mounth++;
- 111   4                      day = day - 30;
+  55          unsigned int blinked_mark = 0;              // 屏幕闪烁定时标记
+  56          unsigned char blinked_screen_State = ~0;    // 屏幕闪烁状态标记
+  57          unsigned char alarm_clock_switch = 0;       // 闹钟开关
+  58          unsigned char alarm_mod_buffer = 0;         // 闹钟缓冲暂存变量
+  59          unsigned char clock_fixed_buffer = 0;       // 时钟矫正缓冲暂存变量
+  60          unsigned char alarm_stop_buzzer = 0x0;      // 用于关闭正在响的闹钟
+  61          
+  62          
+  63          // 该函数用于日历的进位计算
+  64          void time_carry()
+  65          {
+  66   1        if(min_time == 1000)
+  67   1        {
+  68   2          mins++;
+  69   2          min_time = 0;
+  70   2        }
+  71   1        if(mins >= 60)   //60分钟进1小时
+  72   1        {
+  73   2          hours++;
+  74   2          mins = mins-60;
+  75   2        }
+  76   1        if(hours >= 24)  //24小时进1天
+  77   1        {
+  78   2          day++;
+  79   2          hours = hours - 24;
+  80   2        }
+  81   1          if(year >= 10000) //不超过一万年
+  82   1          {
+  83   2              year = year - 10000;
+  84   2          }
+  85   1        if(mounth > 12)
+  86   1          {
+  87   2              mounth = 1;
+  88   2          }
+  89   1          // 日进位
+  90   1          if((year%4 == 0)&&(year%100 != 0)||(year%400 == 0))   // 闰年
+  91   1          {
+  92   2              switch (mounth)
+  93   2              {
+  94   3              case 1:
+  95   3              case 3:
+  96   3              case 5:
+  97   3              case 7:
+  98   3              case 8:
+  99   3              case 10:
+ 100   3              if(day > 31)
+ 101   3                  {
+ 102   4                      mounth++;
+ 103   4                      day = day-31;
+ 104   4                  }
+ 105   3                  break;
+ 106   3              case 12:
+ 107   3                  if(day > 31)
+ 108   3                  {
+ 109   4                      year++;
+ 110   4                      mounth = 1;
+ 111   4                      day = day - 31;
  112   4                  }
  113   3                  break;
- 114   3              default:
- 115   3                  break;
- 116   3              }
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 3   
+ 114   3              case 2:
+ 115   3                  if(day > 29)
+ 116   3                  {
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 3   
 
- 117   2          }
- 118   1          else
- 119   1        {
- 120   2              switch (mounth)
- 121   2              {
- 122   3              case 1:
- 123   3              case 3:
- 124   3              case 5:
- 125   3              case 7:
- 126   3              case 8:
- 127   3              case 10:
- 128   3              if(day > 31)
- 129   3                  {
- 130   4                      mounth++;
- 131   4                      day = day - 31;
- 132   4                  }
- 133   3                  break;
- 134   3              case 12:
- 135   3                  if(day > 31)
- 136   3                  {
- 137   4                      year++;
- 138   4                      mounth = 1;
- 139   4                      day = day - 31;
- 140   4                  }
- 141   3                  break;
- 142   3              case 2:
- 143   3                  if(day > 28)
- 144   3                  {
- 145   4                      mounth++;
- 146   4                      day = day - 28;
- 147   4                  }
- 148   3                  break;
- 149   3              case 4:
- 150   3              case 6:
- 151   3              case 9:
- 152   3              case 11:
- 153   3                  if(day > 30)
- 154   3                  {
- 155   4                      mounth++;
- 156   4                      day = day - 30;
+ 117   4                      mounth++;
+ 118   4                      day = day - 29;
+ 119   4                  }
+ 120   3                  break;
+ 121   3              case 4:
+ 122   3              case 6:
+ 123   3              case 9:
+ 124   3              case 11:
+ 125   3                  if(day > 30)
+ 126   3                  {
+ 127   4                      mounth++;
+ 128   4                      day = day - 30;
+ 129   4                  }
+ 130   3                  break;
+ 131   3              default:
+ 132   3                  break;
+ 133   3              }
+ 134   2          }
+ 135   1          else
+ 136   1        {
+ 137   2              switch (mounth)
+ 138   2              {
+ 139   3              case 1:
+ 140   3              case 3:
+ 141   3              case 5:
+ 142   3              case 7:
+ 143   3              case 8:
+ 144   3              case 10:
+ 145   3              if(day > 31)
+ 146   3                  {
+ 147   4                      mounth++;
+ 148   4                      day = day - 31;
+ 149   4                  }
+ 150   3                  break;
+ 151   3              case 12:
+ 152   3                  if(day > 31)
+ 153   3                  {
+ 154   4                      year++;
+ 155   4                      mounth = 1;
+ 156   4                      day = day - 31;
  157   4                  }
  158   3                  break;
- 159   3              default:
- 160   3                  break;
- 161   3              }
- 162   2        }
- 163   1      }
- 164          
- 165          // 该函数用于时钟校正时的按键功能设置
- 166          // void fixed_clock_function();
- 167          // 该函数用于时钟校正时的屏幕显示
- 168          void blinked_display_windows()
- 169          {
- 170   1          // 屏幕闪烁处理
- 171   1          blinked_mark++;
- 172   1          if(blinked_mark == 15)
- 173   1          {
- 174   2              blinked_screen_State = ~blinked_screen_State;
- 175   2              blinked_mark = 0;
- 176   2          }
- 177   1      
- 178   1          // 屏幕闪烁显示
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 4   
+ 159   3              case 2:
+ 160   3                  if(day > 28)
+ 161   3                  {
+ 162   4                      mounth++;
+ 163   4                      day = day - 28;
+ 164   4                  }
+ 165   3                  break;
+ 166   3              case 4:
+ 167   3              case 6:
+ 168   3              case 9:
+ 169   3              case 11:
+ 170   3                  if(day > 30)
+ 171   3                  {
+ 172   4                      mounth++;
+ 173   4                      day = day - 30;
+ 174   4                  }
+ 175   3                  break;
+ 176   3              default:
+ 177   3                  break;
+ 178   3              }
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 4   
 
- 179   1          switch (windows)
- 180   1          {
- 181   2          case WINDOW1:
- 182   2              if(blinked_screen_State)
- 183   2              {
- 184   3                  display_str_once(window1_num);
- 185   3              }
- 186   2              else
- 187   2              {
- 188   3                  blinked_display_str_once(window1_num,blinked_bit);
- 189   3              }
- 190   2              break;
- 191   2          case WINDOW2:
- 192   2              if(blinked_screen_State)
- 193   2              {
- 194   3                  display_str_once(window2_num);
- 195   3              }
- 196   2              else
- 197   2              {
- 198   3                  blinked_display_str_once(window2_num,blinked_bit);
- 199   3              }
- 200   2              break;
- 201   2          case WINDOW3:
- 202   2              if(blinked_screen_State)
- 203   2              {
- 204   3                  display_str_once(window3_num);
- 205   3              }
- 206   2              else
- 207   2              {
- 208   3                  blinked_display_str_once(window3_num,blinked_bit);
- 209   3              }
- 210   2              break;
- 211   2          
- 212   2          default:
- 213   2              break;
- 214   2          }
- 215   1      }
- 216          
- 217          // 该函数用于数字转字符串,将四位整数转化为字符串
- 218          // 注意数字为无符号整数，一定要大于0
- 219          void num2str(unsigned int num,unsigned char* str)
- 220          {
- 221   1        str[3] = num%10+'0';
- 222   1        str[2] = (num/10)%10+'0';
- 223   1        str[1] = (num/100)%10+'0';
- 224   1        str[0] = (num/1000)%10+'0';
- 225   1      }
- 226          
- 227          // 该函数用于显示对应窗口
- 228          void display_windows()
- 229          {
- 230   1        switch (Mod)
- 231   1        {
- 232   2        case CLOCK_MOD:
- 233   2          switch (windows)
- 234   2          {
- 235   3          case WINDOW1:
- 236   3            display_str_once(window1_num);
- 237   3            break;
- 238   3          case WINDOW2:
- 239   3            display_str_once(window2_num);
- 240   3            break;
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 5   
+ 179   2        }
+ 180   1      }
+ 181          
+ 182          // 该函数用于数字转字符串,将四位整数转化为字符串
+ 183          // 注意数字为无符号整数，一定要大于0
+ 184          void num2str(unsigned int num,unsigned char* str)
+ 185          {
+ 186   1        str[3] = num%10+'0';
+ 187   1        str[2] = (num/10)%10+'0';
+ 188   1        str[1] = (num/100)%10+'0';
+ 189   1        str[0] = (num/1000)%10+'0';
+ 190   1      }
+ 191          
+ 192          // 该函数用于显示对应窗口
+ 193          void display_windows()
+ 194          {
+ 195   1          // 屏幕闪烁处理
+ 196   1          blinked_mark++;
+ 197   1          if(blinked_mark == 1500)
+ 198   1          {
+ 199   2              blinked_screen_State = ~blinked_screen_State;
+ 200   2              blinked_mark = 0;
+ 201   2          }
+ 202   1          switch (Mod)
+ 203   1          {
+ 204   2          case CLOCK_MOD:
+ 205   2              switch (windows)
+ 206   2              {
+ 207   3              case WINDOW1:
+ 208   3                  display_str_once(window1_num);
+ 209   3                  break;
+ 210   3              case WINDOW2:
+ 211   3                  display_str_once(window2_num);
+ 212   3                  break;
+ 213   3              case WINDOW3:
+ 214   3                  display_str_once(window3_num);
+ 215   3                  break;
+ 216   3              default:
+ 217   3                  display_str_once("----");
+ 218   3                  break;
+ 219   3              }
+ 220   2              break;
+ 221   2          case STOPWATCH_MOD:
+ 222   2              display_str_once(stopwatch_window_num);
+ 223   2              break;
+ 224   2          case ALARM_SET_MOD:
+ 225   2              if(blinked_screen_State)
+ 226   2              {
+ 227   3                  display_str_once(alarm_clock_window_num);
+ 228   3                  if(alarm_clock_switch)
+ 229   3                  {
+ 230   4                    LED1 = LED_ON;
+ 231   4                    LED2 = LED_ON;
+ 232   4                  }
+ 233   3                  else
+ 234   3                  {
+ 235   4                    LED1 = LED_OFF;
+ 236   4                    LED2 = LED_OFF;
+ 237   4                  }
+ 238   3              }
+ 239   2              else
+ 240   2              {
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 5   
 
- 241   3          case WINDOW3:
- 242   3            display_str_once(window3_num);
- 243   3            break;
- 244   3          default:
- 245   3            display_str_once("----");
- 246   3            break;
- 247   3          }
- 248   2          break;
- 249   2        case STOPWATCH_MOD:
- 250   2          display_str_once(stopwatch_window_num);
- 251   2          break;
- 252   2        default:
- 253   2          break;
- 254   2        }
- 255   1      }
- 256          
- 257          void stopwatch_function()
- 258          {
- 259   1          if(stopwatch_state)
- 260   1          {
- 261   2              TR1 = 1;
- 262   2          }
- 263   1          else
- 264   1          {
- 265   2              TR1 = 0;
- 266   2          }
- 267   1      }
- 268          
- 269          void key_fucntions()
- 270          {
- 271   1          unsigned char key_state = 0x0;      // 用于储存按键状态
- 272   1          key_state = Key_State_Scan(MODEL1);
- 273   1        // 当模式为时钟模式的时候，按键1的作用是切换窗口，分别显示年月时分
- 274   1        if(((key_state>>0) & 1 )&&(Mod == CLOCK_MOD))
- 275   1        {
- 276   2          windows++;
- 277   2          if(windows == WINDOW3 + 1)
- 278   2          {
- 279   3            windows = WINDOW1;
- 280   3          }
- 281   2        }
- 282   1        
- 283   1          // 当模式为秒表模式的时候，按键1的作用是开始和停止秒表
- 284   1        if(((key_state>>0) & 1 )&&(Mod == STOPWATCH_MOD))
- 285   1        {
- 286   2          stopwatch_state = ~stopwatch_state;
- 287   2        }
- 288   1          
- 289   1          // 当按键2被按下的时候，清零秒表
- 290   1          if((key_state>>1) & 1)
- 291   1          {
- 292   2              stopwatch_state = 0;
- 293   2              // 关闭T1定时器
- 294   2              TR1 = 0;
- 295   2              // 标志位清零
- 296   2              TF1 = 0;
- 297   2              // 重置TL1,TH1
- 298   2              TL1 = (65536 - 10000)%256;
- 299   2              TH1 = (65536 - 10000)/256;
- 300   2              // 归零秒表计数
- 301   2              stopwatch_sec = 0;
- 302   2              stopwatch_10ms = 0;
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 6   
+ 241   3                  blinked_display_str_once(alarm_clock_window_num,alarm_set_bit);
+ 242   3                  LED1 = LED_OFF;
+ 243   3                  LED2 = LED_OFF;
+ 244   3              }
+ 245   2              break;
+ 246   2          case CLOCK_FIXED_MOD:
+ 247   2              // 屏幕闪烁显示
+ 248   2              switch (windows)
+ 249   2              {
+ 250   3              case WINDOW1:
+ 251   3                  if(blinked_screen_State)
+ 252   3                  {
+ 253   4                      display_str_once(window1_num);
+ 254   4                  }
+ 255   3                  else
+ 256   3                  {
+ 257   4                      blinked_display_str_once(window1_num,blinked_bit);
+ 258   4                  }
+ 259   3                  break;
+ 260   3              case WINDOW2:
+ 261   3                  if(blinked_screen_State)
+ 262   3                  {
+ 263   4                      display_str_once(window2_num);
+ 264   4                  }
+ 265   3                  else
+ 266   3                  {
+ 267   4                      blinked_display_str_once(window2_num,blinked_bit);
+ 268   4                  }
+ 269   3                  break;
+ 270   3              case WINDOW3:
+ 271   3                  if(blinked_screen_State)
+ 272   3                  {
+ 273   4                      display_str_once(window3_num);
+ 274   4                  }
+ 275   3                  else
+ 276   3                  {
+ 277   4                      blinked_display_str_once(window3_num,blinked_bit);
+ 278   4                  }
+ 279   3                  break;
+ 280   3              
+ 281   3              default:
+ 282   3                  break;
+ 283   3              }
+ 284   2              break;
+ 285   2          default:
+ 286   2              break;
+ 287   2          }
+ 288   1      }
+ 289          
+ 290          void stopwatch_function()
+ 291          {
+ 292   1          if(stopwatch_state)
+ 293   1          {
+ 294   2              TR1 = 1;
+ 295   2          }
+ 296   1          else
+ 297   1          {
+ 298   2              TR1 = 0;
+ 299   2          }
+ 300   1      }
+ 301          
+ 302          void key_fucntions()
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 6   
 
- 303   2              stopwatch_window_num[0] = '0';
- 304   2              stopwatch_window_num[1] = '0';
- 305   2              stopwatch_window_num[2] = '0';
- 306   2              stopwatch_window_num[3] = '0';
- 307   2          }
- 308   1          
- 309   1          // 当按键3被按下的时候，切换当前模式
- 310   1          if((key_state>>2) & 1)
- 311   1        {
- 312   2          Mod++;
- 313   2          if(Mod == STOPWATCH_MOD+1)
- 314   2          {
- 315   3            Mod = CLOCK_MOD;
- 316   3          }
- 317   2        }
- 318   1          
- 319   1          // 当按键5被按下的时候，打开中断开关
- 320   1           if((key_state>>4) & 1)
- 321   1           {
- 322   2              EX0 = 1;
- 323   2           }
- 324   1      }
- 325          
- 326          
- 327          // 窗口分配：window1 用于时钟
- 328          void clock() interrupt 1
- 329          {
- 330   1        // 标志位清零
- 331   1        TF0 = 0;
- 332   1        // min_time为60ms
- 333   1        TL0 = (65536 - 60000)%256;
- 334   1        TH0 = (65536 - 60000)/256;
- 335   1        min_time++;
- 336   1        time_carry();  // 日历进位操作
- 337   1        num2str(mins+hours*100,window1_num);
- 338   1        num2str(day+mounth*100,window2_num);
- 339   1        num2str(year,window3_num);
- 340   1      }
- 341          
- 342          void stopwatch() interrupt 3
- 343          {
- 344   1          // 标志位清零
- 345   1          TF1 = 0;
- 346   1          // 定时10ms(一般秒表显示的最小单位就为10ms)
- 347   1          TL1 = (65536 - 10000)%256;
- 348   1          TH1 = (65536 - 10000)/256;
- 349   1          stopwatch_10ms++;
- 350   1          // 进位
- 351   1          if(stopwatch_10ms == 100)
- 352   1          {
- 353   2              stopwatch_sec++;
- 354   2              stopwatch_10ms = 0;
- 355   2          }
- 356   1          if(stopwatch_sec == 61)
- 357   1          {
- 358   2              stopwatch_sec = 0; // 设定最长秒表计时60s
- 359   2          }
- 360   1      
- 361   1          /*********************************************************
- 362   1           * 注意，因为两个中断重用了同一个函数，如果在其中一个中断函数执
- 363   1           * 行期间，另一个中断打断了当前终端，那么重用的函数传入的参数将
- 364   1           * 会被覆写，可能造成一定问题。在这里，我们使用OVERLAY进行解决，
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 7   
+ 303          {
+ 304   1        unsigned char key_state = 0x0;      // 用于储存按键状态
+ 305   1        key_state = Key_State_Scan(MODEL1);
+ 306   1        
+ 307   1        // 如果闹钟正在响，按键1可以关闭闹钟
+ 308   1        if(((key_state>>0) & 1) && ((mins == alarm_mins) && (hours == alarm_hours) && (alarm_clock_switch)))
+ 309   1        {
+ 310   2          alarm_stop_buzzer = 0xFF;
+ 311   2        }
+ 312   1        // 当模式为时钟模式的时候，按键1的作用是切换窗口，分别显示年月时分
+ 313   1        if(((key_state>>0) & 1 )&&(Mod == CLOCK_MOD))
+ 314   1        {
+ 315   2          windows++;
+ 316   2          if(windows == WINDOW3 + 1)
+ 317   2          {
+ 318   3            windows = WINDOW1;
+ 319   3          }
+ 320   2        }
+ 321   1        
+ 322   1          // 当模式为秒表模式的时候，按键1的作用是开始和停止秒表
+ 323   1        if(((key_state>>0) & 1 )&&(Mod == STOPWATCH_MOD))
+ 324   1        {
+ 325   2          stopwatch_state = ~stopwatch_state;
+ 326   2        }
+ 327   1      
+ 328   1        // 当模式为闹钟设置模式的时候，按键1的作用是设置闹钟的开关
+ 329   1        if(((key_state>>0) & 1 )&&(Mod == ALARM_SET_MOD))
+ 330   1        {
+ 331   2          alarm_clock_switch = ~alarm_clock_switch;
+ 332   2        }
+ 333   1      
+ 334   1          // 当模式为秒表模式时，按下按键2，清零秒表
+ 335   1        if(((key_state>>1) & 1 )&&(Mod == STOPWATCH_MOD))
+ 336   1          {
+ 337   2              stopwatch_state = 0;
+ 338   2              // 关闭T1定时器
+ 339   2              TR1 = 0;
+ 340   2              // 标志位清零
+ 341   2              TF1 = 0;
+ 342   2              // 重置TL1,TH1
+ 343   2              TL1 = (65536 - 10000)%256;
+ 344   2              TH1 = (65536 - 10000)/256;
+ 345   2              // 归零秒表计数
+ 346   2              stopwatch_sec = 0;
+ 347   2              stopwatch_10ms = 0;
+ 348   2              stopwatch_window_num[0] = '0';
+ 349   2              stopwatch_window_num[1] = '0';
+ 350   2              stopwatch_window_num[2] = '0';
+ 351   2              stopwatch_window_num[3] = '0';
+ 352   2          }
+ 353   1          
+ 354   1          // 当模式为闹钟设置模式时，按下按键2，切换选位
+ 355   1        if(((key_state>>1) & 1 )&&(Mod == ALARM_SET_MOD))
+ 356   1          {
+ 357   2            alarm_set_bit++;
+ 358   2            if(alarm_set_bit >= 5)
+ 359   2            {
+ 360   3              alarm_set_bit = 1;
+ 361   3            }
+ 362   2          }
+ 363   1      
+ 364   1          // 当按键3被按下的时候，切换当前模式
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 7   
 
- 365   1           * 在配置文件中为该函数添加单独的内存空间，将两个中断函数排除在
- 366   1           * 重叠分析之外，防止中断间的串扰。具体用法参考OVERLAY文档。
- 367   1          *********************************************************/
- 368   1          num2str(stopwatch_10ms+stopwatch_sec*100,stopwatch_window_num);
- 369   1      }
- 370          
- 371          // 按下按键5进入中断,开始校正时钟
- 372          void clock_fixed() interrupt 0
- 373          {
- 374   1          unsigned char fixed__state = 1;
- 375   1          extern unsigned char mark;
- 376   1        mark = 1;
- 377   1          blinked_bit = 1;
- 378   1          windows = WINDOW1;
- 379   1          // 关闭中断开关，防止二次进入中断
- 380   1          EX0 = 0;
- 381   1          while(fixed__state)
- 382   1          {
- 383   2              unsigned char fixed_key_state = 0x0;
- 384   2              // 屏幕闪烁显示
- 385   2              blinked_display_windows();
- 386   2              // 进行一次按键扫描
- 387   2              fixed_key_state = Key_State_Scan(MODEL1);
- 388   2              // 按键1切换时间窗口
- 389   2              if((fixed_key_state >> 0) & 1)
- 390   2              {
- 391   3                  windows++;
- 392   3                  if(windows == WINDOW3 + 1)
- 393   3                  {
- 394   4                      windows = WINDOW1;
- 395   4                  }
- 396   3              }
- 397   2              // 按键2切换位数
- 398   2              if((fixed_key_state >> 1) & 1)
- 399   2              {
- 400   3                  blinked_bit++;
- 401   3                  if(blinked_bit == 5)
- 402   3                  {
- 403   4                      blinked_bit = 1;
- 404   4                  }
- 405   3              }
- 406   2              // 按键3加
- 407   2              if((fixed_key_state >> 2) & 1)
- 408   2              {
- 409   3                  if(windows == WINDOW3)
- 410   3                  {
- 411   4                      switch (blinked_bit)
- 412   4                      {
- 413   5                      case 1:
- 414   5                          year++;
- 415   5                          break;
- 416   5                      case 2:
- 417   5                          year = year + 10;
- 418   5                          break;
- 419   5                      case 3:
- 420   5                          year = year + 100;
- 421   5                          break;
- 422   5                      case 4:
- 423   5                          year = year + 1000;
- 424   5                          break;                                        
- 425   5                      default:
- 426   5                          break;
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 8   
+ 365   1        if(((key_state>>2) & 1 )&&(Mod != ALARM_SET_MOD))
+ 366   1        {
+ 367   2          Mod++;
+ 368   2          if(Mod >= STOPWATCH_MOD+1)
+ 369   2          {
+ 370   3            Mod = CLOCK_MOD;
+ 371   3          }
+ 372   2        }
+ 373   1          
+ 374   1          // 当处在闹钟设置模式的时候，按下按键3，当前位加1
+ 375   1        if(((key_state>>2) & 1 )&&(Mod == ALARM_SET_MOD))
+ 376   1        {
+ 377   2          switch (alarm_set_bit)
+ 378   2          {
+ 379   3          case 1:
+ 380   3            if(alarm_mins%10 != 9)
+ 381   3              alarm_mins++;
+ 382   3            else
+ 383   3              alarm_mins = alarm_mins - 9;
+ 384   3            break;
+ 385   3          case 2:
+ 386   3            if(alarm_mins/10 < 6)
+ 387   3              alarm_mins = alarm_mins + 10;
+ 388   3            else
+ 389   3              alarm_mins = alarm_mins - 50;
+ 390   3            break;
+ 391   3          case 3:
+ 392   3            if(alarm_hours+1 >= 24)
+ 393   3              alarm_hours = 0;
+ 394   3            else
+ 395   3              alarm_hours = alarm_hours + 1;
+ 396   3            break;
+ 397   3          case 4:
+ 398   3            if(alarm_hours+10 >= 24)
+ 399   3              alarm_hours = alarm_hours % 10;
+ 400   3            else
+ 401   3              alarm_hours = alarm_hours + 10;
+ 402   3            break;
+ 403   3          default:
+ 404   3            break;
+ 405   3          }
+ 406   2          num2str(alarm_hours*100+alarm_mins,alarm_clock_window_num);
+ 407   2        }
+ 408   1          
+ 409   1          // 当处在闹钟设置模式的时候，按下按键4，当前位减1
+ 410   1        if(((key_state>>3) & 1 )&&(Mod == ALARM_SET_MOD))
+ 411   1        {
+ 412   2          switch (alarm_set_bit)
+ 413   2          {
+ 414   3          case 1:
+ 415   3            if(alarm_mins%10 != 0)
+ 416   3              alarm_mins = alarm_mins - 1;
+ 417   3            break;
+ 418   3          case 2:
+ 419   3            if(!(alarm_mins < 10))
+ 420   3              alarm_mins = alarm_mins - 10;
+ 421   3            break;
+ 422   3          case 3:
+ 423   3            if(!(alarm_hours < 1))
+ 424   3              alarm_hours = alarm_hours - 1;
+ 425   3            break;
+ 426   3          case 4:
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 8   
 
- 427   5                      }
- 428   4      
- 429   4                  }
- 430   3                  else if(windows == WINDOW2)
- 431   3                  {
- 432   4                      switch (blinked_bit)
- 433   4                      {
- 434   5                      case 1:
- 435   5                          day++;
- 436   5                          break;
- 437   5                      case 2:
- 438   5                          day = day + 10;
- 439   5                          break;
- 440   5                      case 3:
- 441   5                          mounth++;
- 442   5                          break;
- 443   5                      case 4:
- 444   5                          mounth = mounth + 10;
- 445   5                          break;                                        
- 446   5                      default:
- 447   5                          break;
- 448   5                      }
- 449   4                  }
- 450   3                  else if (windows == WINDOW1)
- 451   3                  {
- 452   4                      switch (blinked_bit)
- 453   4                      {
- 454   5                      case 1:
- 455   5                          mins++;
- 456   5                          break;
- 457   5                      case 2:
- 458   5                          mins = mins + 10;
- 459   5                          break;
- 460   5                      case 3:
- 461   5                          hours++;
- 462   5                          break;
- 463   5                      case 4:
- 464   5                          hours = hours + 10;
- 465   5                          break;                                        
- 466   5                      default:
- 467   5                          break;
- 468   5                      }
- 469   4                  }
- 470   3                  time_carry();
- 471   3                  num2str(mins+hours*100,window1_num);
- 472   3                  num2str(day+mounth*100,window2_num);
- 473   3                  num2str(year,window3_num);
- 474   3              }
- 475   2              // 按键4减
- 476   2              if((fixed_key_state >> 3) & 1)
- 477   2              {
- 478   3                  if(windows == WINDOW3)
- 479   3                  {
- 480   4                      switch (blinked_bit)
- 481   4                      {
- 482   5                      case 1:
- 483   5                          if(!(year<1))
- 484   5                              year--;
- 485   5                          else
- 486   5                              year = 0;
- 487   5                          break;
- 488   5                      case 2:
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 9   
+ 427   3            if(!(alarm_hours < 10))
+ 428   3              alarm_hours = alarm_hours - 10; 
+ 429   3            break;
+ 430   3          default:
+ 431   3            break;
+ 432   3          }
+ 433   2          num2str(alarm_hours*100+alarm_mins,alarm_clock_window_num);
+ 434   2        }
+ 435   1          
+ 436   1          // 当按键5被按下的时候，打开中断开关
+ 437   1        if((key_state>>4) & 1)
+ 438   1          {
+ 439   2            EX0 = 1;
+ 440   2          }
+ 441   1      
+ 442   1        // 当按键6被按下的时候，切换到闹钟设置窗口
+ 443   1        if((key_state>>5) & 1)
+ 444   1          {
+ 445   2              if(alarm_mod_buffer == 0)
+ 446   2              {
+ 447   3                  alarm_mod_buffer = Mod;
+ 448   3                  Mod = ALARM_SET_MOD;
+ 449   3              }
+ 450   2              else
+ 451   2              {
+ 452   3                  Mod = alarm_mod_buffer;
+ 453   3                  alarm_mod_buffer = 0;
+ 454   3                  LED1 = LED_ON;
+ 455   3                  LED2 = LED_ON;
+ 456   3              }
+ 457   2          }
+ 458   1      }
+ 459          
+ 460          void alarm_clock()
+ 461          {
+ 462   1        if((mins == alarm_mins) && (hours == alarm_hours) && (alarm_clock_switch))
+ 463   1        {
+ 464   2          if(alarm_stop_buzzer)
+ 465   2          {
+ 466   3            buzzer_off();
+ 467   3          }
+ 468   2          else
+ 469   2          {
+ 470   3            buzzer_blinked(3);
+ 471   3          }
+ 472   2        }
+ 473   1        else
+ 474   1        {
+ 475   2          alarm_stop_buzzer = 0x0;
+ 476   2        }
+ 477   1      }
+ 478          
+ 479          // 窗口分配：window1 用于时钟
+ 480          void clock() interrupt 1
+ 481          {
+ 482   1        // 标志位清零
+ 483   1        TF0 = 0;
+ 484   1        // min_time为60ms
+ 485   1        TL0 = (65536 - 60000)%256;
+ 486   1        TH0 = (65536 - 60000)/256;
+ 487   1        min_time++;
+ 488   1        time_carry();  // 日历进位操作
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 9   
 
- 489   5                          if(!(year<10))
- 490   5                              year = year - 10;
- 491   5                          else
- 492   5                              year = 0;
- 493   5                          break;
- 494   5                      case 3:
- 495   5                          if(!(year<100))
- 496   5                              year = year - 100;
- 497   5                          else
- 498   5                              year = 0;
- 499   5                          break;
- 500   5                      case 4:
- 501   5                          if(!(year<1000))
- 502   5                              year = year - 1000;
- 503   5                          else
- 504   5                              year = 0;
- 505   5                          break;                                        
- 506   5                      default:
- 507   5                          break;
- 508   5                      }
- 509   4      
- 510   4                  }
- 511   3                  else if(windows == WINDOW2)
- 512   3                  {
- 513   4                      switch (blinked_bit)
- 514   4                      {
- 515   5                      case 1:
- 516   5                          if(!(day<1))
- 517   5                              day--;
- 518   5                          else
- 519   5                              day = 0;
- 520   5                          break;
- 521   5                      case 2:
- 522   5                          if(!(day<10))
- 523   5                              day = day - 10;
- 524   5                          else
- 525   5                              day = 0;                     
- 526   5                          break;
- 527   5                      case 3:
- 528   5                          if(!(mounth<1))
- 529   5                              mounth--;
- 530   5                          else
- 531   5                              mounth = 0;
- 532   5                          break;
- 533   5                      case 4:
- 534   5                          if(!(mounth<10))
- 535   5                              mounth = mounth - 10;
- 536   5                          else
- 537   5                              mounth = 0;
- 538   5                          break;                                        
- 539   5                      default:
- 540   5                          break;
- 541   5                      }
- 542   4                  }
- 543   3                  else if (windows == WINDOW1)
- 544   3                  {
- 545   4                      switch (blinked_bit)
- 546   4                      {
- 547   5                      case 1:
- 548   5                          if(!(mins<1))
- 549   5                              mins--;
- 550   5                          else
-C51 COMPILER V9.54   SERVICE_FUN                                                           11/06/2024 15:11:46 PAGE 10  
+ 489   1        num2str(mins+hours*100,window1_num);
+ 490   1        num2str(day+mounth*100,window2_num);
+ 491   1        num2str(year,window3_num);
+ 492   1      }
+ 493          
+ 494          void stopwatch() interrupt 3
+ 495          {
+ 496   1          // 标志位清零
+ 497   1          TF1 = 0;
+ 498   1          // 定时10ms(一般秒表显示的最小单位就为10ms)
+ 499   1          TL1 = (65536 - 10000)%256;
+ 500   1          TH1 = (65536 - 10000)/256;
+ 501   1          stopwatch_10ms++;
+ 502   1          // 进位
+ 503   1          if(stopwatch_10ms == 100)
+ 504   1          {
+ 505   2              stopwatch_sec++;
+ 506   2              stopwatch_10ms = 0;
+ 507   2          }
+ 508   1          if(stopwatch_sec == 61)
+ 509   1          {
+ 510   2              stopwatch_sec = 0; // 设定最长秒表计时60s
+ 511   2          }
+ 512   1      
+ 513   1          /*********************************************************
+ 514   1           * 注意，因为两个中断重用了同一个函数，如果在其中一个中断函数执
+ 515   1           * 行期间，另一个中断打断了当前终端，那么重用的函数传入的参数将
+ 516   1           * 会被覆写，可能造成一定问题。在这里，我们使用OVERLAY进行解决，
+ 517   1           * 在配置文件中为该函数添加单独的内存空间，将两个中断函数排除在
+ 518   1           * 重叠分析之外，防止中断间的串扰。具体用法参考OVERLAY文档。
+ 519   1          *********************************************************/
+ 520   1          num2str(stopwatch_10ms+stopwatch_sec*100,stopwatch_window_num);
+ 521   1      }
+ 522          
+ 523          // 按下按键5进入中断,开始校正时钟
+ 524          void clock_fixed() interrupt 0
+ 525          {
+ 526   1        unsigned char fixed__state = 1;
+ 527   1        extern unsigned char mark;
+ 528   1        mark = 1;
+ 529   1        blinked_bit = 1;
+ 530   1        windows = WINDOW1;
+ 531   1        clock_fixed_buffer = Mod;
+ 532   1        Mod = CLOCK_FIXED_MOD;
+ 533   1        // 关闭中断开关，防止二次进入中断
+ 534   1        EX0 = 0;
+ 535   1        while(fixed__state)
+ 536   1        {
+ 537   2          unsigned char fixed_key_state = 0x0;
+ 538   2          // 屏幕闪烁显示
+ 539   2          display_windows();
+ 540   2          // 进行一次按键扫描
+ 541   2          fixed_key_state = Key_State_Scan(MODEL1);
+ 542   2          // 按键1切换时间窗口
+ 543   2          if((fixed_key_state >> 0) & 1)
+ 544   2          {
+ 545   3              windows++;
+ 546   3              if(windows == WINDOW3 + 1)
+ 547   3              {
+ 548   4                  windows = WINDOW1;
+ 549   4              }
+ 550   3          }
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 10  
 
- 551   5                              mins = 0;
- 552   5                          break;
- 553   5                      case 2:
- 554   5                          if(!(mins<10))
- 555   5                              mins = mins - 10;
- 556   5                          else
- 557   5                              mins = 0;                        
- 558   5                          break;
- 559   5                      case 3:
- 560   5                          if(!(hours<1))
- 561   5                              hours--;
- 562   5                          else
- 563   5                              hours = 0;
- 564   5                          break;
- 565   5                      case 4:
- 566   5                          if(!(hours<10))
- 567   5                              hours = hours - 10;
- 568   5                          else
- 569   5                              hours = 0;
- 570   5                          break;                                        
- 571   5                      default:
- 572   5                          break;
- 573   5                      }
- 574   4                  }
- 575   3                  time_carry();
- 576   3                  num2str(mins+hours*100,window1_num);
- 577   3                  num2str(day+mounth*100,window2_num);
- 578   3                  num2str(year,window3_num);
- 579   3              }
- 580   2      
- 581   2              // 再次按下按键5退出循环
- 582   2              if((fixed_key_state >> 4) & 1)
- 583   2              {
- 584   3                  fixed__state = 0;
- 585   3              }
- 586   2          }
- 587   1      }
- 588          
- 589          
+ 551   2          // 按键2切换位数
+ 552   2          if((fixed_key_state >> 1) & 1)
+ 553   2          {
+ 554   3              blinked_bit++;
+ 555   3              if(blinked_bit == 5)
+ 556   3              {
+ 557   4                  blinked_bit = 1;
+ 558   4              }
+ 559   3          }
+ 560   2          // 按键3加
+ 561   2          if((fixed_key_state >> 2) & 1)
+ 562   2          {
+ 563   3              if(windows == WINDOW3)
+ 564   3              {
+ 565   4                  switch (blinked_bit)
+ 566   4                  {
+ 567   5                  case 1:
+ 568   5                      year++;
+ 569   5                      break;
+ 570   5                  case 2:
+ 571   5                      year = year + 10;
+ 572   5                      break;
+ 573   5                  case 3:
+ 574   5                      year = year + 100;
+ 575   5                      break;
+ 576   5                  case 4:
+ 577   5                      year = year + 1000;
+ 578   5                      break;                                        
+ 579   5                  default:
+ 580   5                      break;
+ 581   5                  }
+ 582   4      
+ 583   4              }
+ 584   3              else if(windows == WINDOW2)
+ 585   3              {
+ 586   4                  switch (blinked_bit)
+ 587   4                  {
+ 588   5                  case 1:
+ 589   5                      day++;
+ 590   5                      break;
+ 591   5                  case 2:
+ 592   5                      day = day + 10;
+ 593   5                      break;
+ 594   5                  case 3:
+ 595   5                      mounth++;
+ 596   5                      break;
+ 597   5                  case 4:
+ 598   5                      mounth = mounth + 10;
+ 599   5                      break;                                        
+ 600   5                  default:
+ 601   5                      break;
+ 602   5                  }
+ 603   4              }
+ 604   3              else if (windows == WINDOW1)
+ 605   3              {
+ 606   4                  switch (blinked_bit)
+ 607   4                  {
+ 608   5                  case 1:
+ 609   5                      mins++;
+ 610   5                      break;
+ 611   5                  case 2:
+ 612   5                      mins = mins + 10;
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 11  
+
+ 613   5                      break;
+ 614   5                  case 3:
+ 615   5                      hours++;
+ 616   5                      break;
+ 617   5                  case 4:
+ 618   5                      hours = hours + 10;
+ 619   5                      break;                                        
+ 620   5                  default:
+ 621   5                      break;
+ 622   5                  }
+ 623   4              }
+ 624   3              time_carry();
+ 625   3              num2str(mins+hours*100,window1_num);
+ 626   3              num2str(day+mounth*100,window2_num);
+ 627   3              num2str(year,window3_num);
+ 628   3          }
+ 629   2          // 按键4减
+ 630   2          if((fixed_key_state >> 3) & 1)
+ 631   2          {
+ 632   3              if(windows == WINDOW3)
+ 633   3              {
+ 634   4                  switch (blinked_bit)
+ 635   4                  {
+ 636   5                  case 1:
+ 637   5                      if(!(year<1))
+ 638   5                          year--;
+ 639   5                      else
+ 640   5                          year = 0;
+ 641   5                      break;
+ 642   5                  case 2:
+ 643   5                      if(!(year<10))
+ 644   5                          year = year - 10;
+ 645   5                      else
+ 646   5                          year = 0;
+ 647   5                      break;
+ 648   5                  case 3:
+ 649   5                      if(!(year<100))
+ 650   5                          year = year - 100;
+ 651   5                      else
+ 652   5                          year = 0;
+ 653   5                      break;
+ 654   5                  case 4:
+ 655   5                      if(!(year<1000))
+ 656   5                          year = year - 1000;
+ 657   5                      else
+ 658   5                          year = 0;
+ 659   5                      break;                                        
+ 660   5                  default:
+ 661   5                      break;
+ 662   5                  }
+ 663   4      
+ 664   4              }
+ 665   3              else if(windows == WINDOW2)
+ 666   3              {
+ 667   4                  switch (blinked_bit)
+ 668   4                  {
+ 669   5                  case 1:
+ 670   5                      if(!(day<1))
+ 671   5                          day--;
+ 672   5                      else
+ 673   5                          day = 0;
+ 674   5                      break;
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 12  
+
+ 675   5                  case 2:
+ 676   5                      if(!(day<10))
+ 677   5                          day = day - 10;
+ 678   5                      else
+ 679   5                          day = 0;                     
+ 680   5                      break;
+ 681   5                  case 3:
+ 682   5                      if(!(mounth<1))
+ 683   5                          mounth--;
+ 684   5                      else
+ 685   5                          mounth = 0;
+ 686   5                      break;
+ 687   5                  case 4:
+ 688   5                      if(!(mounth<10))
+ 689   5                          mounth = mounth - 10;
+ 690   5                      else
+ 691   5                          mounth = 0;
+ 692   5                      break;                                        
+ 693   5                  default:
+ 694   5                      break;
+ 695   5                  }
+ 696   4              }
+ 697   3              else if (windows == WINDOW1)
+ 698   3              {
+ 699   4                  switch (blinked_bit)
+ 700   4                  {
+ 701   5                  case 1:
+ 702   5                      if(!(mins<1))
+ 703   5                          mins--;
+ 704   5                      else
+ 705   5                          mins = 0;
+ 706   5                      break;
+ 707   5                  case 2:
+ 708   5                      if(!(mins<10))
+ 709   5                          mins = mins - 10;
+ 710   5                      else
+ 711   5                          mins = 0;                        
+ 712   5                      break;
+ 713   5                  case 3:
+ 714   5                      if(!(hours<1))
+ 715   5                          hours--;
+ 716   5                      else
+ 717   5                          hours = 0;
+ 718   5                      break;
+ 719   5                  case 4:
+ 720   5                      if(!(hours<10))
+ 721   5                          hours = hours - 10;
+ 722   5                      else
+ 723   5                          hours = 0;
+ 724   5                      break;                                        
+ 725   5                  default:
+ 726   5                      break;
+ 727   5                  }
+ 728   4              }
+ 729   3              time_carry();
+ 730   3              num2str(mins+hours*100,window1_num);
+ 731   3              num2str(day+mounth*100,window2_num);
+ 732   3              num2str(year,window3_num);
+ 733   3          }
+ 734   2      
+ 735   2          // 再次按下按键5退出循环
+ 736   2          if((fixed_key_state >> 4) & 1)
+C51 COMPILER V9.54   SERVICE_FUN                                                           12/07/2024 11:51:27 PAGE 13  
+
+ 737   2          {
+ 738   3              fixed__state = 0;
+ 739   3              Mod = clock_fixed_buffer;
+ 740   3              clock_fixed_buffer = 0;
+ 741   3          }
+ 742   2        }
+ 743   1      }
+ 744          
+ 745          
+ 746          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   2065    ----
+   CODE SIZE        =   2696    ----
    CONSTANT SIZE    =      5    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     42       7
+   DATA SIZE        =     57       8
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   11/06/2024 15:11:47 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   12/07/2024 11:51:27 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -19,145 +19,293 @@ line level    source
    9          #include <reg51.h>
   10          #include "timer.h"
   11          
-  12          // 宏定义数字管的段码io口和位选io口
-  13          #define       GPIO_DIG        P1       // 段码
-  14          #define       GPIO_PLACE        P2     // 位选
-  15          
-  16          // led段码表,存放在rom中
-  17          unsigned char code leddata[]={ 
-  18                          0xC0,  //"0"
-  19                          0xF9,  //"1"
-  20                          0xA4,  //"2"
-  21                          0xB0,  //"3"
-  22                          0x99,  //"4"
-  23                          0x92,  //"5"
-  24                          0x82,  //"6"
-  25                          0xF8,  //"7"
-  26                          0x80,  //"8"
-  27                          0x90,  //"9"
-  28                          0x88,  //"A"
-  29                          0x83,  //"B"
-  30                          0xC6,  //"C"
-  31                          0xA1,  //"D"
-  32                          0x86,  //"E"
-  33                          0x8E,  //"F"
-  34                          0x89,  //"H"
-  35                          0xC7,  //"L"
-  36                          0xC8,  //"n"
-  37                          0xC1,  //"u"
-  38                          0x8C,  //"P"
-  39                          0xA3,  //"o"
-  40                          0xBF,  //"-"
-  41                          0xFF,  //熄灭
-  42                          0x91   //"y"
-  43                                   };
-  44          
-  45          // 用于让数码管静态显示
-  46          // display_screen(input,signature)
-  47          // input为需要输入的字符，signature为选位
-  48          // 该函数的显示过程已经进行了消影处理
-  49          void display_screen(unsigned char input,unsigned char signature)
-  50          {
-  51   1        unsigned char temp = 0x01;
-  52   1        // 设置选位
-  53   1        if(signature>=0&&signature<=3)
-  54   1          GPIO_PLACE = (GPIO_PLACE & 0xf0) + (temp << signature);  // 保留高四位,变更低四位
-C51 COMPILER V9.54   LED                                                                   11/06/2024 15:11:47 PAGE 2   
+  12          unsigned int delay_count = 0;
+  13          unsigned int delay_flag = 0;
+  14          
+  15          // 宏定义数字管的段码io口和位选io口
+  16          #define       GPIO_DIG        P1       // 段码
+  17          #define       GPIO_PLACE        P2     // 位选
+  18          
+  19          // led段码表,存放在rom中
+  20          unsigned char code leddata[]={ 
+  21           
+  22                          0x12,  //"0"
+  23                          0x77,  //"1"
+  24                          0x2A,  //"2"
+  25                          0x26,  //"3"
+  26                          0x47,  //"4"
+  27                          0x86,  //"5"
+  28                          0x82,  //"6"
+  29                          0x37,  //"7"
+  30                          0x02,  //"8"
+  31                          0x06,  //"9"
+  32                          0x03,  //"A"
+  33                          0xC2,  //"B"
+  34                          0x9A,  //"C"
+  35                          0x62,  //"D"
+  36                          0x8A,  //"E"
+  37                          0x8B,  //"F"
+  38                          0x43,  //"H"
+  39                          0xDA,  //"L"
+  40                          0x13,  //"n"
+  41                          0x52,  //"u"
+  42                          0x0B,  //"P"
+  43                          0xE2,  //"o"
+  44                          0xEF,  //"-"
+  45                          0xFF,  //熄灭
+  46                          0x46   //"y"
+  47                                   };
+  48          
+  49                                   
+  50          void display_off()
+  51          {
+  52   1        GPIO_PLACE = GPIO_PLACE & 0xF0 + 0x0F;
+  53   1      }
+  54          
+C51 COMPILER V9.54   LED                                                                   12/07/2024 11:51:27 PAGE 2   
 
-  55   1        
-  56   1        if((input>='0')&&(input<='9'))
-  57   1          GPIO_DIG = leddata[input-'0'];
-  58   1        else if((input>='A')&&(input<='F'))
-  59   1          GPIO_DIG = leddata[input-'A'+10];
-  60   1        else if(input=='H')
-  61   1          GPIO_DIG = leddata[16];
-  62   1        else if(input=='L')
-  63   1          GPIO_DIG = leddata[17];
-  64   1        else if(input=='n')
-  65   1          GPIO_DIG = leddata[18];
-  66   1        else if(input=='u')
-  67   1          GPIO_DIG = leddata[19];
-  68   1        else if(input=='p')
-  69   1          GPIO_DIG = leddata[20];
-  70   1        else if(input=='o')
-  71   1          GPIO_DIG = leddata[21];
-  72   1        else if(input=='-')
-  73   1          GPIO_DIG = leddata[22];
-  74   1        else if(input=='*') // 表示熄灭
-  75   1          GPIO_DIG = leddata[23];
-  76   1        else if(input=='y')
-  77   1          GPIO_DIG = leddata[24];
-  78   1        short_delay_5ms();
-  79   1        
-  80   1        // 消影
-  81   1        GPIO_DIG = 0xff;
-  82   1        short_delay_5ms();
-  83   1      }
-  84          
-  85          // 用于让数码管在xms内动态显示一组数组
-  86          void display_str(unsigned char *input,unsigned int xms)
-  87          {
-  88   1        unsigned char i = 0;
-  89   1        for(i=0;i<xms/40;i++)
-  90   1        {
-  91   2          display_screen(input[0],0);
-  92   2          display_screen(input[1],1);
-  93   2          display_screen(input[2],2);
-  94   2          display_screen(input[3],3);
-  95   2        }
-  96   1      }
-  97          
-  98          // 用于让数码管动态显示一次数组，一次的显示时长约为40ms
-  99          void display_str_once(unsigned char* input)
- 100          {
- 101   1      //  input[0] = '0' ;
- 102   1        display_screen(input[0],0);
- 103   1        display_screen(input[1],1);
- 104   1        display_screen(input[2],2);
- 105   1        display_screen(input[3],3);
- 106   1      }
- 107          
- 108          // 用于让数码管动态显示一次数组，且指定其中的一个位数不亮
- 109          // 该函数只是用于闪烁
- 110          // 一次的显示时长约为40ms
- 111          void blinked_display_str_once(unsigned char* input, unsigned char blinked_bit)
- 112          {
- 113   1        switch (blinked_bit)
- 114   1        {
- 115   2        case 1:
- 116   2          display_screen(input[0],0);
-C51 COMPILER V9.54   LED                                                                   11/06/2024 15:11:47 PAGE 3   
+  55          // 只让选中的位数亮，用于让数码管静态显示
+  56          // display_screen(input,signature)
+  57          // input为需要输入的字符，signature为选位
+  58          void display_screen(unsigned char input,unsigned char signature)
+  59          {
+  60   1        unsigned char temp = 0x01;
+  61   1        // 设置选位
+  62   1        if(signature>=0&&signature<=3)
+  63   1          GPIO_PLACE = (GPIO_PLACE & 0xf0) + (~(temp << signature) & 0x0F);  // 保留高四位,变更低四位
+  64   1        
+  65   1        if((input>='0')&&(input<='9'))
+  66   1          GPIO_DIG = leddata[input-'0'];
+  67   1        else if((input>='A')&&(input<='F'))
+  68   1          GPIO_DIG = leddata[input-'A'+10];
+  69   1        else if(input=='H')
+  70   1          GPIO_DIG = leddata[16];
+  71   1        else if(input=='L')
+  72   1          GPIO_DIG = leddata[17];
+  73   1        else if(input=='n')
+  74   1          GPIO_DIG = leddata[18];
+  75   1        else if(input=='u')
+  76   1          GPIO_DIG = leddata[19];
+  77   1        else if(input=='p')
+  78   1          GPIO_DIG = leddata[20];
+  79   1        else if(input=='o')
+  80   1          GPIO_DIG = leddata[21];
+  81   1        else if(input=='-')
+  82   1          GPIO_DIG = leddata[22];
+  83   1        else if(input=='*') // 表示熄灭
+  84   1          GPIO_DIG = leddata[23];
+  85   1        else if(input=='y')
+  86   1          GPIO_DIG = leddata[24];
+  87   1      }
+  88          
+  89          // 用于让数码管在xms内动态显示一组数组
+  90          void display_str(unsigned char* input,unsigned int xms)
+  91          {
+  92   1        unsigned int i = 0;
+  93   1        for(i=0;i<8*xms;i++)
+  94   1        {
+  95   2          display_str_once(input);
+  96   2        }
+  97   1      }
+  98          
+  99          // 用于让数码管动态显示一次数组，不占用cpu运行时间
+ 100          void display_str_once(unsigned char* input)
+ 101          {
+ 102   1        delay_count++;
+ 103   1        if(delay_count == 10)
+ 104   1        {
+ 105   2          delay_flag++;
+ 106   2          delay_count = 0;
+ 107   2        }
+ 108   1        switch (delay_flag)
+ 109   1        {
+ 110   2        case 0:
+ 111   2          display_screen(input[0],0);
+ 112   2          break;
+ 113   2        case 2:
+ 114   2          display_screen(input[1],1);
+ 115   2          break;
+ 116   2        case 4:
+C51 COMPILER V9.54   LED                                                                   12/07/2024 11:51:27 PAGE 3   
 
- 117   2          display_screen(input[1],1);
- 118   2          display_screen(input[2],2);
- 119   2          break;
- 120   2        case 2:
- 121   2          display_screen(input[0],0);
- 122   2          display_screen(input[1],1);
- 123   2          display_screen(input[3],3);
- 124   2          break;
- 125   2        case 3:
- 126   2          display_screen(input[0],0);
- 127   2          display_screen(input[2],2);
- 128   2          display_screen(input[3],3);
- 129   2          break;
- 130   2        case 4:
- 131   2          display_screen(input[1],1);
- 132   2          display_screen(input[2],2);
- 133   2          display_screen(input[3],3);
- 134   2          break;
- 135   2        default:
- 136   2          break;
- 137   2        }
- 138   1      }
+ 117   2          display_screen(input[2],2);
+ 118   2          break;
+ 119   2        case 6:
+ 120   2          display_screen(input[3],3);
+ 121   2          break;
+ 122   2        case 1:
+ 123   2        case 3:
+ 124   2        case 5:
+ 125   2          display_off();
+ 126   2          break;
+ 127   2        case 7:
+ 128   2          display_off();
+ 129   2          delay_flag = 0;
+ 130   2          break;
+ 131   2        default:
+ 132   2          break;
+ 133   2        }
+ 134   1      }
+ 135          
+ 136          // 用于让数码管动态显示一次数组，且指定其中的一个位数不亮
+ 137          // 该函数只是用于闪烁
+ 138          // 不占用cpu运行时间
+ 139          void blinked_display_str_once(unsigned char* input, unsigned char blinked_bit)
+ 140          {
+ 141   1        switch (blinked_bit)
+ 142   1        {
+ 143   2        case 1:
+ 144   2          delay_count++;
+ 145   2          if(delay_count == 10)
+ 146   2          {
+ 147   3            delay_flag++;
+ 148   3            delay_count = 0;
+ 149   3          }
+ 150   2          switch (delay_flag)
+ 151   2          {
+ 152   3          case 0:
+ 153   3            display_screen(input[0],0);
+ 154   3            break;
+ 155   3          case 2:
+ 156   3            display_screen(input[1],1);
+ 157   3            break;
+ 158   3          case 4:
+ 159   3            display_screen(input[2],2);
+ 160   3            break;
+ 161   3          case 6:
+ 162   3            display_off();
+ 163   3            break;
+ 164   3          case 1:
+ 165   3          case 3:
+ 166   3          case 5:
+ 167   3            display_off();
+ 168   3            break;
+ 169   3          case 7:
+ 170   3            display_off();
+ 171   3            delay_flag = 0;
+ 172   3            break;
+ 173   3          default:
+ 174   3            break;
+ 175   3          }
+ 176   2          break;
+ 177   2        case 2:
+ 178   2          delay_count++;
+C51 COMPILER V9.54   LED                                                                   12/07/2024 11:51:27 PAGE 4   
+
+ 179   2          if(delay_count == 10)
+ 180   2          {
+ 181   3            delay_flag++;
+ 182   3            delay_count = 0;
+ 183   3          }
+ 184   2          switch (delay_flag)
+ 185   2          {
+ 186   3          case 0:
+ 187   3            display_screen(input[0],0);
+ 188   3            break;
+ 189   3          case 2:
+ 190   3            display_screen(input[1],1);
+ 191   3            break;
+ 192   3          case 4:
+ 193   3            display_off();
+ 194   3            break;
+ 195   3          case 6:
+ 196   3            display_screen(input[3],3);
+ 197   3            break;
+ 198   3          case 1:
+ 199   3          case 3:
+ 200   3          case 5:
+ 201   3            display_off();
+ 202   3            break;
+ 203   3          case 7:
+ 204   3            display_off();
+ 205   3            delay_flag = 0;
+ 206   3            break;
+ 207   3          default:
+ 208   3            break;
+ 209   3          }
+ 210   2          break;
+ 211   2        case 3:
+ 212   2          delay_count++;
+ 213   2          if(delay_count == 10)
+ 214   2          {
+ 215   3            delay_flag++;
+ 216   3            delay_count = 0;
+ 217   3          }
+ 218   2          switch (delay_flag)
+ 219   2          {
+ 220   3          case 0:
+ 221   3            display_screen(input[0],0);
+ 222   3            break;
+ 223   3          case 2:
+ 224   3            display_off();
+ 225   3            break;
+ 226   3          case 4:
+ 227   3            display_screen(input[2],2);
+ 228   3            break;
+ 229   3          case 6:
+ 230   3            display_screen(input[3],3);
+ 231   3            break;
+ 232   3          case 1:
+ 233   3          case 3:
+ 234   3          case 5:
+ 235   3            display_off();
+ 236   3            break;
+ 237   3          case 7:
+ 238   3            display_off();
+ 239   3            delay_flag = 0;
+ 240   3            break;
+C51 COMPILER V9.54   LED                                                                   12/07/2024 11:51:27 PAGE 5   
+
+ 241   3          default:
+ 242   3            break;
+ 243   3          }
+ 244   2          break;
+ 245   2        case 4:
+ 246   2          delay_count++;
+ 247   2          if(delay_count == 10)
+ 248   2          {
+ 249   3            delay_flag++;
+ 250   3            delay_count = 0;
+ 251   3          }
+ 252   2          switch (delay_flag)
+ 253   2          {
+ 254   3          case 0:
+ 255   3            display_off();
+ 256   3            break;
+ 257   3          case 2:
+ 258   3            display_screen(input[1],1);
+ 259   3            break;
+ 260   3          case 4:
+ 261   3            display_screen(input[2],2);
+ 262   3            break;
+ 263   3          case 6:
+ 264   3            display_screen(input[3],3);
+ 265   3            break;
+ 266   3          case 1:
+ 267   3          case 3:
+ 268   3          case 5:
+ 269   3            display_off();
+ 270   3            break;
+ 271   3          case 7:
+ 272   3            display_off();
+ 273   3            delay_flag = 0;
+ 274   3            break;
+ 275   3          default:
+ 276   3            break;
+ 277   3          }
+ 278   2          break;
+ 279   2        default:
+ 280   2          break;
+ 281   2        }
+ 282   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    521    ----
+   CODE SIZE        =    778    ----
    CONSTANT SIZE    =     25    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----      12
+   DATA SIZE        =      4       7
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

@@ -1,11 +1,37 @@
 Rebuild target 'Target 1'
+compiling service_fun.c...
+compiling interrupt.c...
 compiling key.c...
 compiling led.c...
 compiling main.c...
-..\SOURCE\main.c(13): warning C206: 'Interrupt_init': missing function-prototype
-compiling service_fun.c...
-..\SOURCE\service_fun.c(35): error C231: '_num2str': redefinition
-..\SOURCE\service_fun.c(40): error C231: '_num2str': redefinition
-compiling interrupt.c...
 compiling timer.c...
-Target not created.
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?DISPLAY_WINDOWS?SERVICE_FUN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?STOPWATCH_FUNCTION?SERVICE_FUN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?KEY_FUCNTIONS?SERVICE_FUN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_TIMER_LONG_DELAY_XMS?TIMER
+
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_NUM2STR?SERVICE_FUN
+    CALLER1: ?PR?STOPWATCH?SERVICE_FUN
+    CALLER2: ?PR?CLOCK_FIXED?SERVICE_FUN
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _BUZZER_BLINKED
+    MODULE:  ..\OUTPUT\main.obj (MAIN)
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _BUZZER_BLINKED
+    MODULE:  ..\OUTPUT\main.obj (MAIN)
+    ADDRESS: 0CB9H
+
+Program Size: data=71.0 xdata=0 code=3389
+creating hex file from "..\OUTPUT\clock"...
+"..\OUTPUT\clock" - 0 Error(s), 7 Warning(s).
