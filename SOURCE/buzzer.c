@@ -21,7 +21,7 @@ void buzzer_beep(unsigned int hz)
 void buzzer_blinked(unsigned int hz)
 {
     blinked_count++;
-    if(blinked_count == 17680)
+    if(blinked_count == 1876)
     {
         button = ~button;
 			blinked_count = 0;
@@ -30,4 +30,9 @@ void buzzer_blinked(unsigned int hz)
     {
         buzzer_beep(hz);
     }
+}
+
+void buzzer_off()
+{
+	Buzzer_Port = 1;
 }

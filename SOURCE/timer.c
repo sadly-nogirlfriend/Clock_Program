@@ -30,7 +30,7 @@ void short_delay_5ms()
 {
 	unsigned char data i,j;
 	for(j=0;j<14;j++)
-		{for(i=0;i<117;i++);}
+		{for(i=0;i<50;i++);}
 }
 
 // 最小延时时间位50ms，延时毫秒为5ms的整数倍

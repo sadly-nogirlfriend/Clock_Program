@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TIMER                                                                 11/06/2024 16:06:51 PAGE 1   
+C51 COMPILER V9.54   TIMER                                                                 12/07/2024 11:51:27 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TIMER
@@ -41,7 +41,7 @@ line level    source
   30          {
   31   1        unsigned char data i,j;
   32   1        for(j=0;j<14;j++)
-  33   1          {for(i=0;i<117;i++);}
+  33   1          {for(i=0;i<50;i++);}
   34   1      }
   35          
   36          // 最小延时时间位50ms，延时毫秒为5ms的整数倍
@@ -62,7 +62,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
-C51 COMPILER V9.54   TIMER                                                                 11/06/2024 16:06:51 PAGE 2   
+C51 COMPILER V9.54   TIMER                                                                 12/07/2024 11:51:27 PAGE 2   
 
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

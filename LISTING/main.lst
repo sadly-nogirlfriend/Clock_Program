@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  11/06/2024 16:06:51 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  12/07/2024 11:51:27 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -16,30 +16,33 @@ line level    source
    6          #include "timer.h"
    7          #include "buzzer.h"
    8          
-   9          sbit LED1 = P2^4;
-  10          sbit LED2 = P2^5;
+   9          #define   LED_ON    0
+  10          #define   LED_OFF   1
   11          
-  12          void main()
-  13          {
-  14   1        Interrupt_init(); // 中断初始化
-  15   1        display_str("----",2000);  // 开机提醒
-  16   1        LED1 = ~LED1;
-  17   1        LED2 = ~LED2;
-  18   1        T1_Init();    // 用作秒表的T1定时器初始化
-  19   1        T0_Init();    // 用作时钟的T2定时器开始计时
-  20   1        while(1)
-  21   1        {
-  22   2          // key_fucntions();
-  23   2          // stopwatch_function();
-  24   2          // display_windows();
-  25   2          buzzer_blinked(50);
-  26   2        }
-  27   1      }
-  28          
+  12          sbit LED1 = P2^4;
+  13          sbit LED2 = P2^5;
+  14          
+  15          void main()
+  16          {
+  17   1        Interrupt_init(); // 中断初始化
+  18   1        display_str("----",2000);  // 开机提醒
+  19   1        LED1 = LED_ON;
+  20   1        LED2 = LED_ON;
+  21   1        T1_Init();    // 用作秒表的T1定时器初始化
+  22   1        T0_Init();    // 用作时钟的T2定时器开始计时
+  23   1        while(1)
+  24   1        {
+  25   2          key_fucntions();
+  26   2          stopwatch_function();
+  27   2          display_windows();
+  28   2          alarm_clock();
+  29   2        }
+  30   1      }
+  31          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     35    ----
+   CODE SIZE        =     40    ----
    CONSTANT SIZE    =      5    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

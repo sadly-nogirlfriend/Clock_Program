@@ -9,49 +9,58 @@ description : 该文件存放了一些用于显示led和led数码管的
 #include <reg51.h>
 #include "timer.h"
 
+unsigned int delay_count = 0;
+unsigned int delay_flag = 0;
+
 // 宏定义数字管的段码io口和位选io口
 #define				GPIO_DIG				P1       // 段码
 #define				GPIO_PLACE				P2		 // 位选
 
 // led段码表,存放在rom中
 unsigned char code leddata[]={ 
-                0xC0,  //"0"
-                0xF9,  //"1"
-                0xA4,  //"2"
-                0xB0,  //"3"
-                0x99,  //"4"
-                0x92,  //"5"
+ 
+                0x12,  //"0"
+                0x77,  //"1"
+                0x2A,  //"2"
+                0x26,  //"3"
+                0x47,  //"4"
+                0x86,  //"5"
                 0x82,  //"6"
-                0xF8,  //"7"
-                0x80,  //"8"
-                0x90,  //"9"
-                0x88,  //"A"
-                0x83,  //"B"
-                0xC6,  //"C"
-                0xA1,  //"D"
-                0x86,  //"E"
-                0x8E,  //"F"
-                0x89,  //"H"
-                0xC7,  //"L"
-                0xC8,  //"n"
-                0xC1,  //"u"
-                0x8C,  //"P"
-                0xA3,  //"o"
-                0xBF,  //"-"
+                0x37,  //"7"
+                0x02,  //"8"
+                0x06,  //"9"
+                0x03,  //"A"
+                0xC2,  //"B"
+                0x9A,  //"C"
+                0x62,  //"D"
+                0x8A,  //"E"
+                0x8B,  //"F"
+                0x43,  //"H"
+                0xDA,  //"L"
+                0x13,  //"n"
+                0x52,  //"u"
+                0x0B,  //"P"
+                0xE2,  //"o"
+                0xEF,  //"-"
                 0xFF,  //熄灭
-                0x91   //"y"
+                0x46   //"y"
                          };
 
-// 用于让数码管静态显示
+												 
+void display_off()
+{
+	GPIO_PLACE = GPIO_PLACE & 0xF0 + 0x0F;
+}
+
+// 只让选中的位数亮，用于让数码管静态显示
 // display_screen(input,signature)
 // input为需要输入的字符，signature为选位
-// 该函数的显示过程已经进行了消影处理
 void display_screen(unsigned char input,unsigned char signature)
 {
 	unsigned char temp = 0x01;
 	// 设置选位
 	if(signature>=0&&signature<=3)
-		GPIO_PLACE = (GPIO_PLACE & 0xf0) + (temp << signature);  // 保留高四位,变更低四位
+		GPIO_PLACE = (GPIO_PLACE & 0xf0) + (~(temp << signature) & 0x0F);  // 保留高四位,变更低四位
 	
 	if((input>='0')&&(input<='9'))
 		GPIO_DIG = leddata[input-'0'];
@@ -75,62 +84,197 @@ void display_screen(unsigned char input,unsigned char signature)
 		GPIO_DIG = leddata[23];
 	else if(input=='y')
 		GPIO_DIG = leddata[24];
-	short_delay_5ms();
-	
-	// 消影
-	GPIO_DIG = 0xff;
-	short_delay_5ms();
 }
 
 // 用于让数码管在xms内动态显示一组数组
-void display_str(unsigned char *input,unsigned int xms)
+void display_str(unsigned char* input,unsigned int xms)
 {
-	unsigned char i = 0;
-	for(i=0;i<xms/40;i++)
+	unsigned int i = 0;
+	for(i=0;i<8*xms;i++)
 	{
-		display_screen(input[0],0);
-		display_screen(input[1],1);
-		display_screen(input[2],2);
-		display_screen(input[3],3);
+		display_str_once(input);
 	}
 }
 
-// 用于让数码管动态显示一次数组，一次的显示时长约为40ms
+// 用于让数码管动态显示一次数组，不占用cpu运行时间
 void display_str_once(unsigned char* input)
 {
-//	input[0] = '0' ;
-	display_screen(input[0],0);
-	display_screen(input[1],1);
-	display_screen(input[2],2);
-	display_screen(input[3],3);
+	delay_count++;
+	if(delay_count == 10)
+	{
+		delay_flag++;
+		delay_count = 0;
+	}
+	switch (delay_flag)
+	{
+	case 0:
+		display_screen(input[0],0);
+		break;
+	case 2:
+		display_screen(input[1],1);
+		break;
+	case 4:
+		display_screen(input[2],2);
+		break;
+	case 6:
+		display_screen(input[3],3);
+		break;
+	case 1:
+	case 3:
+	case 5:
+		display_off();
+		break;
+	case 7:
+		display_off();
+		delay_flag = 0;
+		break;
+	default:
+		break;
+	}
 }
 
 // 用于让数码管动态显示一次数组，且指定其中的一个位数不亮
 // 该函数只是用于闪烁
-// 一次的显示时长约为40ms
+// 不占用cpu运行时间
 void blinked_display_str_once(unsigned char* input, unsigned char blinked_bit)
 {
 	switch (blinked_bit)
 	{
 	case 1:
-		display_screen(input[0],0);
-		display_screen(input[1],1);
-		display_screen(input[2],2);
+		delay_count++;
+		if(delay_count == 10)
+		{
+			delay_flag++;
+			delay_count = 0;
+		}
+		switch (delay_flag)
+		{
+		case 0:
+			display_screen(input[0],0);
+			break;
+		case 2:
+			display_screen(input[1],1);
+			break;
+		case 4:
+			display_screen(input[2],2);
+			break;
+		case 6:
+			display_off();
+			break;
+		case 1:
+		case 3:
+		case 5:
+			display_off();
+			break;
+		case 7:
+			display_off();
+			delay_flag = 0;
+			break;
+		default:
+			break;
+		}
 		break;
 	case 2:
-		display_screen(input[0],0);
-		display_screen(input[1],1);
-		display_screen(input[3],3);
+		delay_count++;
+		if(delay_count == 10)
+		{
+			delay_flag++;
+			delay_count = 0;
+		}
+		switch (delay_flag)
+		{
+		case 0:
+			display_screen(input[0],0);
+			break;
+		case 2:
+			display_screen(input[1],1);
+			break;
+		case 4:
+			display_off();
+			break;
+		case 6:
+			display_screen(input[3],3);
+			break;
+		case 1:
+		case 3:
+		case 5:
+			display_off();
+			break;
+		case 7:
+			display_off();
+			delay_flag = 0;
+			break;
+		default:
+			break;
+		}
 		break;
 	case 3:
-		display_screen(input[0],0);
-		display_screen(input[2],2);
-		display_screen(input[3],3);
+		delay_count++;
+		if(delay_count == 10)
+		{
+			delay_flag++;
+			delay_count = 0;
+		}
+		switch (delay_flag)
+		{
+		case 0:
+			display_screen(input[0],0);
+			break;
+		case 2:
+			display_off();
+			break;
+		case 4:
+			display_screen(input[2],2);
+			break;
+		case 6:
+			display_screen(input[3],3);
+			break;
+		case 1:
+		case 3:
+		case 5:
+			display_off();
+			break;
+		case 7:
+			display_off();
+			delay_flag = 0;
+			break;
+		default:
+			break;
+		}
 		break;
 	case 4:
-		display_screen(input[1],1);
-		display_screen(input[2],2);
-		display_screen(input[3],3);
+		delay_count++;
+		if(delay_count == 10)
+		{
+			delay_flag++;
+			delay_count = 0;
+		}
+		switch (delay_flag)
+		{
+		case 0:
+			display_off();
+			break;
+		case 2:
+			display_screen(input[1],1);
+			break;
+		case 4:
+			display_screen(input[2],2);
+			break;
+		case 6:
+			display_screen(input[3],3);
+			break;
+		case 1:
+		case 3:
+		case 5:
+			display_off();
+			break;
+		case 7:
+			display_off();
+			delay_flag = 0;
+			break;
+		default:
+			break;
+		}
 		break;
 	default:
 		break;

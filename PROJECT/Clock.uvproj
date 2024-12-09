@@ -333,7 +333,7 @@
             <CaseSensitiveSymbols>0</CaseSensitiveSymbols>
             <WarningLevel>2</WarningLevel>
             <DataOverlaying>1</DataOverlaying>
-            <OverlayString>?PR?CLOCK?SERVICE_FUN~?PR?_NUM2STR?SERVICE_FUN</OverlayString>
+            <OverlayString>?PR?_NUM2STR?SERVICE_FUN ! *</OverlayString>
             <MiscControls></MiscControls>
             <DisableWarningNumbers></DisableWarningNumbers>
             <LinkerCmdFile></LinkerCmdFile>
@@ -392,6 +392,11 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SOURCE\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SOURCE\buzzer.c</FilePath>
             </File>
           </Files>
         </Group>
